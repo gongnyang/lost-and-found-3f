@@ -43,21 +43,56 @@ export default function BattlePage() {
           : '직접 진입 — 실제 턴제 로직은 P3C에서 구현'}
       </p>
 
-      <div className="battle-stage">
-        {manifest ? (
-          <SpritePlayer sheet={unit.sheet} manifest={manifest} action={action} scale={2} />
-        ) : (
-          <p>manifest 로딩 중...</p>
-        )}
-      </div>
+      <div className="battle-panel">
+        <div className="battle-hp-list">
+          {battle01.party.map((p) => (
+            <div className="battle-hp-row" key={p.id}>
+              <span className="battle-hp-name">{p.name}</span>
+              <div className="battle-hp-track">
+                <div className="battle-hp-fill" data-tier="ok" style={{ width: '100%' }} />
+              </div>
+              <span className="battle-hp-num">{p.maxHp}/{p.maxHp}</span>
+            </div>
+          ))}
+          <div className="battle-hp-row battle-hp-row--enemy">
+            <span className="battle-hp-name">{battle01.enemy.name}</span>
+            <div className="battle-hp-track">
+              <div className="battle-hp-fill" data-tier="warn" style={{ width: '68%' }} />
+            </div>
+            <span className="battle-hp-num">177/{battle01.enemy.maxHp}</span>
+          </div>
+        </div>
 
-      <div className="battle-controls">
-        <button type="button" className="menu-btn" onClick={() => setAction('idle')}>
-          idle
-        </button>
-        <button type="button" className="menu-btn" onClick={() => setAction('attack')}>
-          attack
-        </button>
+        <div className="battle-stage">
+          {manifest ? (
+            <SpritePlayer sheet={unit.sheet} manifest={manifest} action={action} scale={2} />
+          ) : (
+            <p>manifest 로딩 중...</p>
+          )}
+        </div>
+
+        <div className="battle-command-menu">
+          {unit.skills.map((skill, i) => {
+            const wired = skill.id === 'attack';
+            return (
+              <button
+                key={skill.id}
+                type="button"
+                className="battle-command-btn"
+                disabled={!wired}
+                onClick={wired ? () => setAction('attack') : undefined}
+                title={wired ? undefined : 'P3C 턴제 시퀀서 구현 전까지 비활성'}
+              >
+                <span className="battle-command-num">{String(i + 1).padStart(2, '0')}</span>
+                {skill.name}
+              </button>
+            );
+          })}
+          <button type="button" className="battle-command-btn battle-command-btn--idle" onClick={() => setAction('idle')}>
+            <span className="battle-command-num">00</span>
+            대기
+          </button>
+        </div>
       </div>
 
       {vn?.pendingBattle && (

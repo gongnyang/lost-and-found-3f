@@ -3,9 +3,10 @@
 // 타이핑 이펙트(문자당 20~35ms 가변), 클릭 시 즉시 완성→다음, 화자 네임플레이트(캐릭터 컬러).
 // §2.3 DialogueBox 스펙.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import type { CharId } from '@/engine/types';
 import { getCharacterMeta } from '@/data/characters';
+import { getHeroineSkin } from './heroineSkin';
 
 export interface DialogueBoxProps {
   who: CharId | null;
@@ -63,7 +64,7 @@ export default function DialogueBox({
   const complete = shownLen >= text.length;
   const meta = who ? getCharacterMeta(who) : null;
   const name = meta?.name ?? (who === 'mc' ? '나' : null);
-  const color = meta?.color ?? '#e5e5e5';
+  const skin = getHeroineSkin(who);
 
   function handleClick() {
     if (!complete) {
@@ -73,15 +74,40 @@ export default function DialogueBox({
     onAdvance();
   }
 
+  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  }
+
   return (
-    <div className="dialogue-box" onClick={handleClick} role="button" tabIndex={0}>
+    <div
+      className="dialogue-box"
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={complete ? '다음 대사로' : '대사 즉시 표시'}
+    >
       {name && (
-        <div className="dialogue-nameplate" style={{ color }}>
+        <div
+          className="dialogue-nameplate"
+          style={skin ? { background: skin.bg, color: skin.text } : undefined}
+        >
           {name}
         </div>
       )}
-      <p className={`dialogue-text ${!name ? 'dialogue-text--narration' : ''}`}>{text.slice(0, shownLen)}</p>
-      {complete && <div className="dialogue-caret" aria-hidden="true">▼</div>}
+      <div className="dialogue-textplate">
+        <p className={`dialogue-text ${!name ? 'dialogue-text--narration' : ''}`}>
+          {text.slice(0, shownLen)}
+        </p>
+      </div>
+      {complete && (
+        <div className="dialogue-caret" aria-hidden="true">
+          ▼
+        </div>
+      )}
     </div>
   );
 }

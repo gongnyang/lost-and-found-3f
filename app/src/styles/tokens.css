@@ -1,0 +1,157 @@
+/*
+ * 디자인 토큰 — docs/DESIGN-SYSTEM.md §9 :root 블록의 이식본.
+ * 원본과 값은 동일하게 유지한다(단일 소스 존중). --font-sans/--font-serif만
+ * next/font/local이 layout.tsx의 <html> 클래스에 주입하는 --font-pretendard /
+ * --font-nanum-myeongjo CSS 변수를 1순위로 얹어 로컬 번들 폰트가 우선 적용되게 한다
+ * (외부 CDN 런타임 의존 없음 — 두 변수가 없으면 시스템 폴백 스택으로 그대로 저하).
+ */
+
+:root {
+  /* ---- base ---- */
+  --bg-void: #171310;
+  --bg-scene-present: #1c1712;
+  --paper: #f1e6d2;
+  --paper-inner: #f7eedf;
+  --ink-strong: #2a2119;
+  --ink-soft: #3b2e22;
+  --muted: #7c6a55;
+  --line-hairline: rgba(59, 46, 34, 0.18);
+  --cream-onDark: #d8c9ae;
+  --cream-onDark-dim: #a79a85;
+
+  /* ---- system accents ---- */
+  --accent-terracotta: #c1633d;
+  --accent-dustyrose: #c98a93;
+  --accent-tealfaded: #5e7c74;
+  --accent-washi: #e4c36b;
+  --accent-danger: #9c4a3a;
+
+  /* ---- heroine personal colors ---- */
+  --heroine-sea: #e8916b; /* 세아 · 여동생 */
+  --heroine-riwon: #7c8fb0; /* 리원 · 동급생 */
+  --heroine-yunseul: #6b3a4b; /* 윤슬 · 누나 */
+
+  /* ---- typography ---- */
+  --font-sans: var(--font-pretendard), 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system,
+    'Segoe UI', sans-serif;
+  --font-serif: var(--font-nanum-myeongjo), 'Nanum Myeongjo', 'Noto Serif KR', 'AppleMyungjo', 'Batang', serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, ui-monospace, monospace;
+  --ls-crisp: -0.01em;
+  --ls-serif: 0.02em;
+  --text-display: 2rem;
+  --text-h1: 1.5rem;
+  --text-dialogue: clamp(0.9375rem, 1vw + 0.7rem, 1.0625rem);
+  --text-name: 0.9375rem;
+  --text-choice: 0.9375rem;
+  --text-ui: 0.8125rem;
+  --text-caption: 0.6875rem;
+  --text-battle-num: 0.875rem;
+  --text-plate-grain-mask: 0.02;
+
+  /* ---- dialogue box ---- */
+  --dialogue-maxw: 920px;
+  --dialogue-minh: 132px;
+  --dialogue-minh-mobile: 108px;
+  --dialogue-bottom-offset: 24px;
+  --dialogue-bg: rgba(241, 230, 210, 0.86);
+  --dialogue-blur: 3px;
+  --dialogue-border: 1px solid rgba(59, 46, 34, 0.18);
+  --dialogue-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  --dialogue-radius: 6px;
+  --dialogue-rotate: -0.4deg;
+  --dialogue-pad: 20px 24px;
+  --dialogue-pad-mobile: 16px 18px;
+  --nameplate-offset-y: -10px;
+  --nameplate-radius: 4px;
+  --nameplate-pad: 4px 12px;
+
+  /* ---- choice buttons ---- */
+  --choice-bg: rgba(247, 238, 223, 0.92);
+  --choice-radius: 4px;
+  --choice-pad: 12px 16px;
+  --choice-gap: 10px;
+  --choice-lift-hover: -2px;
+  --choice-shadow-hover: 0 6px 14px rgba(0, 0, 0, 0.28);
+
+  /* ---- quickmenu / backlog / save ---- */
+  --qm-bg: rgba(23, 19, 16, 0.55);
+  --qm-blur: 4px;
+  --qm-radius: 10px;
+  --qm-icon-size: 20px;
+  --qm-gap: 6px;
+  --qm-idle-opacity: 0.35;
+  --qm-idle-delay: 3000ms;
+  --backlog-bg: var(--bg-scene-present);
+  --backlog-grain-opacity: 0.05;
+  --backlog-divider: 1px dashed rgba(216, 201, 174, 0.25);
+  --save-backdrop: rgba(10, 8, 6, 0.75);
+  --save-slot-radius: 4px;
+  --save-slot-grain: 0.12;
+  --save-slot-gap: 16px;
+  --save-slot-minw: 160px;
+
+  /* ---- film grain / scene grade (default = present, overridden by [data-scene]) ---- */
+  --grain-opacity: 0.05;
+  --sepia-amount: 0.06;
+  --vignette-amount: 0.16;
+  --grain-flicker-duration: 700ms;
+
+  /* ---- battle ---- */
+  --battle-panel-bg: #14161c;
+  --battle-panel-border: #2e323e;
+  --battle-hp-track: #20232b;
+  --battle-hp-fill-ok: var(--accent-tealfaded);
+  --battle-hp-fill-warn: var(--accent-washi);
+  --battle-hp-fill-danger: var(--accent-danger);
+  --battle-hp-radius: 3px;
+  --battle-command-font: var(--font-mono);
+  --battle-command-bg: rgba(20, 22, 28, 0.9);
+  --battle-turn-highlight: var(--accent-terracotta);
+
+  /* ---- unravel (twist state, default = inactive baseline) ---- */
+  --unravel-desync-offset: 0px;
+  --unravel-desaturate: 0;
+  --unravel-contrast: 1;
+  --unravel-jitter-deg: 0deg;
+  --unravel-stagger-step: 0ms;
+  --unravel-duration: 520ms;
+  --unravel-ease: cubic-bezier(0.7, 0, 0.84, 0);
+  --unravel-accent-drain: var(--cream-onDark);
+
+  /* ---- motion ---- */
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
+  --ease-settle: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-exit: cubic-bezier(0.5, 0, 0.75, 0);
+  --typing-speed: 32ms;
+  --typing-pause-punct: 180ms;
+  --typing-pause-ellipsis: 320ms;
+}
+
+[data-scene='present'] {
+  --grain-opacity: 0.05;
+  --sepia-amount: 0.06;
+  --vignette-amount: 0.16;
+}
+[data-scene='memory'] {
+  --grain-opacity: 0.16;
+  --sepia-amount: 0.26;
+  --vignette-amount: 0.34;
+}
+
+[data-ui-state='unravel'] {
+  --grain-opacity: 0.55;
+  --unravel-desync-offset: 2px;
+  --unravel-desaturate: 0.6;
+  --unravel-contrast: 1.1;
+  --unravel-jitter-deg: 3deg;
+  --unravel-stagger-step: 40ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --grain-flicker-duration: 0ms;
+    --unravel-jitter-deg: 0deg;
+  }
+}

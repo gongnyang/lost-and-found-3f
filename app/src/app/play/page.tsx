@@ -125,9 +125,13 @@ export default function PlayPage() {
   if (!vn) return <div className="play-screen" />;
 
   return (
-    <div className="play-screen">
-      {vn.bg && <div className="bg-layer" style={{ backgroundImage: `url(${vn.bg})` }} />}
-      <CharacterStage stage={vn.stage} speaker={vn.speaker} />
+    <div className="play-screen" data-scene="present">
+      <div className="art-layer">
+        {vn.bg && <div className="bg-layer" style={{ backgroundImage: `url(${vn.bg})` }} />}
+        <CharacterStage stage={vn.stage} speaker={vn.speaker} />
+      </div>
+      <div className="grain-layer" aria-hidden="true" />
+      <div className="vignette-layer" aria-hidden="true" />
       {vn.cg && <CGViewer src={vn.cg} onDismiss={() => {}} />}
 
       <div className="bottom-ui">

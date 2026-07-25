@@ -3,8 +3,8 @@
 // 슬롯별 챕터명·일시·위치. §2.3 SaveLoadModal 스펙.
 // 슬롯 0 = 오토세이브(로드 전용), 1~9 = 수동 세이브(저장 가능).
 
-import { useEffect, useState } from 'react';
-import { listSlots, type SaveSlotData } from '@/engine/save';
+import { useEffect, useState, type CSSProperties, type MouseEvent } from 'react';
+import { deleteSlot, listSlots, type SaveSlotData } from '@/engine/save';
 
 export interface SaveLoadModalProps {
   mode: 'save' | 'load';
@@ -40,6 +40,12 @@ export default function SaveLoadModal({ mode, onClose, onSave, onLoad }: SaveLoa
     onLoad(slot);
   }
 
+  function handleDelete(e: MouseEvent, slot: number) {
+    e.stopPropagation();
+    deleteSlot(slot);
+    setSlots(listSlots());
+  }
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="saveload-panel" onClick={(e) => e.stopPropagation()}>
@@ -53,24 +59,38 @@ export default function SaveLoadModal({ mode, onClose, onSave, onLoad }: SaveLoa
           {Array.from({ length: 10 }, (_, slot) => {
             const data = slots[slot];
             const disabled = mode === 'save' ? slot === 0 : !data;
+            const deletable = slot !== 0 && !!data;
             return (
-              <button
-                key={slot}
-                type="button"
-                className="saveload-slot"
-                disabled={disabled}
-                onClick={() => handleSlotClick(slot)}
-              >
-                <div className="saveload-slot-title">{slot === 0 ? '오토세이브' : `슬롯 ${slot}`}</div>
-                {data ? (
-                  <>
-                    <div className="saveload-slot-chapter">{data.sceneTitle}</div>
-                    <div className="saveload-slot-time">{formatDate(data.savedAt)}</div>
-                  </>
-                ) : (
-                  <div className="saveload-slot-empty">비어 있음</div>
+              <div key={slot} className="saveload-slot-wrap">
+                <button
+                  type="button"
+                  className="saveload-slot"
+                  disabled={disabled}
+                  onClick={() => handleSlotClick(slot)}
+                >
+                  <div className="saveload-slot-thumb">
+                    <div className="grain-layer" style={{ '--grain-opacity': 'var(--save-slot-grain)' } as CSSProperties} />
+                  </div>
+                  <div className="saveload-slot-title">{slot === 0 ? '오토세이브' : `슬롯 ${slot}`}</div>
+                  {data ? (
+                    <>
+                      <div className="saveload-slot-chapter">{data.sceneTitle}</div>
+                      <div className="saveload-slot-time">{formatDate(data.savedAt)}</div>
+                    </>
+                  ) : (
+                    <div className="saveload-slot-empty">빈 페이지</div>
+                  )}
+                </button>
+                {deletable && (
+                  <button
+                    type="button"
+                    className="saveload-slot-delete"
+                    onClick={(e) => handleDelete(e, slot)}
+                  >
+                    삭제
+                  </button>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
