@@ -6,7 +6,7 @@ import type { CharId, Expr, StagePos } from './types';
 import type { DialogueLine, Settings, VisibleChoiceItem } from './interpreter';
 import { DEFAULT_SETTINGS } from './interpreter';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2; // v2: mcName 필드 추가(nameInput 커맨드, §0 엔진 델타)
 
 export interface SaveStageActor {
   who: CharId;
@@ -29,6 +29,7 @@ export interface SaveSlotData {
   cg: string | null;
   cgUnlocked: string[];
   settings: Settings;
+  mcName: string | null; // nameInput 확정값(ver 2+). 이전 세이브 마이그레이션 시 null로 채움
   savedAt: string; // ISO timestamp
 }
 
@@ -37,6 +38,7 @@ export interface GlobalData {
   endings: string[]; // 해금된 엔딩 id 목록
   cgGallery: string[]; // 전 플레이스루 CG 해금 키 (세이브 슬롯과 분리된 영속 데이터)
   settings: Settings;
+  mcName: string | null; // miyensi:global.mcName — nameInput 확정값의 영속 미러(ver 2+)
 }
 
 const SLOT_PREFIX = 'miyensi:save:';
@@ -49,7 +51,8 @@ function hasStorage(): boolean {
 function migrateSlot(raw: unknown): SaveSlotData | null {
   if (!raw || typeof raw !== 'object') return null;
   const r = raw as Partial<SaveSlotData> & { ver?: number };
-  // ver 1 → 현재 최신. 향후 버전이 올라가면 여기 체인에 단계별 업그레이드를 추가한다.
+  // ver 1 → 2: mcName 필드 추가(누락 시 null). ver 2 → 현재 최신.
+  // 향후 버전이 올라가면 여기 체인에 단계별 업그레이드를 추가한다.
   if (typeof r.ver !== 'number' || r.ver < 1) return null;
   return {
     ver: SAVE_VERSION,
@@ -66,6 +69,7 @@ function migrateSlot(raw: unknown): SaveSlotData | null {
     cg: r.cg ?? null,
     cgUnlocked: r.cgUnlocked ?? [],
     settings: { ...DEFAULT_SETTINGS, ...(r.settings ?? {}) },
+    mcName: r.mcName ?? null,
     savedAt: r.savedAt ?? new Date().toISOString(),
   };
 }
@@ -79,6 +83,7 @@ function migrateGlobal(raw: unknown): GlobalData | null {
     endings: r.endings ?? [],
     cgGallery: r.cgGallery ?? [],
     settings: { ...DEFAULT_SETTINGS, ...(r.settings ?? {}) },
+    mcName: r.mcName ?? null,
   };
 }
 
@@ -113,15 +118,15 @@ export function listSlots(): (SaveSlotData | null)[] {
 
 export function loadGlobal(): GlobalData {
   if (!hasStorage()) {
-    return { ver: SAVE_VERSION, endings: [], cgGallery: [], settings: DEFAULT_SETTINGS };
+    return { ver: SAVE_VERSION, endings: [], cgGallery: [], settings: DEFAULT_SETTINGS, mcName: null };
   }
   const raw = window.localStorage.getItem(GLOBAL_KEY);
-  if (!raw) return { ver: SAVE_VERSION, endings: [], cgGallery: [], settings: DEFAULT_SETTINGS };
+  if (!raw) return { ver: SAVE_VERSION, endings: [], cgGallery: [], settings: DEFAULT_SETTINGS, mcName: null };
   try {
     const migrated = migrateGlobal(JSON.parse(raw));
-    return migrated ?? { ver: SAVE_VERSION, endings: [], cgGallery: [], settings: DEFAULT_SETTINGS };
+    return migrated ?? { ver: SAVE_VERSION, endings: [], cgGallery: [], settings: DEFAULT_SETTINGS, mcName: null };
   } catch {
-    return { ver: SAVE_VERSION, endings: [], cgGallery: [], settings: DEFAULT_SETTINGS };
+    return { ver: SAVE_VERSION, endings: [], cgGallery: [], settings: DEFAULT_SETTINGS, mcName: null };
   }
 }
 

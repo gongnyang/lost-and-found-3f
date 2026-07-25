@@ -56,7 +56,31 @@ export const CHARACTERS: Record<'sea' | 'riwon' | 'yunseul', CharacterMeta> = {
 
 export function getCharacterMeta(id: CharId): CharacterMeta | null {
   if (id === 'sea' || id === 'riwon' || id === 'yunseul') return CHARACTERS[id];
-  return null; // mc/mob은 현재 스탠딩 에셋 없음 (지문 화자로만 사용)
+  return null; // haram/censor/mob은 현재 스탠딩 에셋 없음 (지문 화자로만 사용)
+}
+
+/** 스탠딩 이미지가 없는 대사 전용 화자 메타 — CharacterStage에는 등장하지 않는다. */
+export const NARRATOR_META: Partial<Record<CharId, { color: string }>> = {
+  haram: { color: '#8A8F98' }, // 무채 회청 — STORY.md §2
+  censor: { color: '#1A1A1A' }, // 먹 — STORY.md §2
+};
+
+export interface NameplateOptions {
+  nameRevealed: boolean;
+  mcName: string | null;
+}
+
+/**
+ * 화자 네임플레이트 표기 규칙 (STORY.md §0/§2 정본).
+ * - haram: name_revealed===false 인 동안 「???」, true가 되면 확정된 mcName.
+ * - censor: 항상 「검열자」.
+ * - 그 외: CHARACTERS 메타의 실제 이름, 메타가 없으면 null(네임플레이트 미표시 = 지문 취급).
+ */
+export function resolveNameplate(who: CharId | null, opts: NameplateOptions): string | null {
+  if (!who) return null;
+  if (who === 'haram') return opts.nameRevealed ? opts.mcName ?? '???' : '???';
+  if (who === 'censor') return '검열자';
+  return getCharacterMeta(who)?.name ?? null;
 }
 
 /** 표정 이미지 경로. exprs에 없는 표정이 요청되면 neutral로 폴백. 기본 표시는 expr_neutral(base는 참조용). */

@@ -1,6 +1,9 @@
 // 씬 스크립트 스키마 — docs/ARCHITECTURE.md §2.1 정본. 글자 그대로 구현, 임의 확장 금지.
 
-export type CharId = 'sea' | 'riwon' | 'yunseul' | 'mc' | 'mob';
+export type CharId = 'haram' | 'sea' | 'riwon' | 'yunseul' | 'mob' | 'censor';
+// 'haram' = 주인공(정하람). 네임플레이트는 flags.name_revealed===false 인 동안 「???」로 렌더,
+// 스탠딩 이미지는 없음(대사 전용 화자). 'censor' = 검열자(전투/환각 화자), 네임플레이트 「검열자」,
+// 스탠딩 이미지 없음. who: null = 지문/모놀로그(하람 1인칭 내레이션).
 export type Expr =
   | 'neutral'
   | 'smile'
@@ -32,13 +35,16 @@ export type Command =
   | { t: 'cgHide' }
   | { t: 'bgm'; src: string | null; fade?: number } // null = stop
   | { t: 'sfx'; src: string }
-  | { t: 'fx'; kind: 'shake' | 'flash' | 'blurMemory' | 'wait'; dur?: number }
+  | { t: 'fx'; kind: 'shake' | 'flash' | 'blurMemory' | 'wait' | 'uiStrip'; dur?: number }
   // blurMemory = "기억" 연출용 화면 블러+탈색 (테마 전용 이펙트)
+  // uiStrip = data-ui-state="unravel" 토글(전투3 UI 박리 연출). dur 후 해제, dur 없으면 유지,
+  // dur:0은 즉시 해제 규약.
   | {
       t: 'choice';
       items: { label: string; goto: string; set?: FlagOp[]; if?: Cond }[];
     }
   | { t: 'set'; ops: FlagOp[] }
+  | { t: 'nameInput' } // 이름 입력 오버레이 → 확정 시 mcName 저장 + name_revealed=true
   | { t: 'if'; cond: Cond; then: string; else?: string } // 라벨 점프
   | { t: 'label'; id: string }
   | { t: 'jump'; scene: string; label?: string } // 씬 간 이동

@@ -70,8 +70,10 @@ export interface VNState {
   pendingBattle: { id: string; onWin: string; onLose: string } | null;
   ending: string | null;
   sfxEvents: string[];
-  fxEvent: { kind: 'shake' | 'flash' | 'blurMemory' | 'wait'; dur?: number } | null;
+  fxEvent: { kind: 'shake' | 'flash' | 'blurMemory' | 'wait' | 'uiStrip'; dur?: number } | null;
   done: boolean;
+  mcName: string | null; // FlagOp(number|boolean)로 못 담는 문자열 필드 — nameInput 확정 시 세팅
+  nameInputPending: boolean; // true인 동안 이름 입력 오버레이가 진행을 막는다
 }
 
 export function createInitialState(scene: Scene, settings: Settings = DEFAULT_SETTINGS): VNState {
@@ -96,6 +98,8 @@ export function createInitialState(scene: Scene, settings: Settings = DEFAULT_SE
     sfxEvents: [],
     fxEvent: null,
     done: false,
+    mcName: null,
+    nameInputPending: false,
   };
 }
 
@@ -216,6 +220,8 @@ export function step(state: VNState, cmd: Command): StepResult {
     }
     case 'set':
       return { state: { ...state, flags: applyFlagOps(state.flags, cmd.ops) }, blocking: false };
+    case 'nameInput':
+      return { state: { ...state, nameInputPending: true }, blocking: true };
     case 'if': {
       const target = evalCond(cmd.cond, state.flags) ? cmd.then : cmd.else;
       if (!target) return { state, blocking: false };
@@ -281,6 +287,24 @@ export function selectChoice(state: VNState, script: Command[], index: number): 
   const labels = resolveLabels(script);
   const target = labels[item.goto];
   s = { ...s, cursor: target !== undefined ? target : s.cursor + 1 };
+  return advance(s, script);
+}
+
+/**
+ * 이름 입력 확정: nameInputPending 상태가 아니면 no-op. 공백만 입력하면 no-op(미확정 유지).
+ * mcName 저장 + name_revealed=true 세팅 후 커서 위치(이미 nameInput 커맨드 다음으로 진행됨)부터
+ * 자동진행을 재개한다 — selectChoice와 달리 goto 라벨이 없어 순차 진행만 한다.
+ */
+export function submitName(state: VNState, script: Command[], name: string): VNState {
+  if (!state.nameInputPending) return state;
+  const trimmed = name.trim();
+  if (!trimmed) return state;
+  const s: VNState = {
+    ...state,
+    nameInputPending: false,
+    mcName: trimmed,
+    flags: applyFlagOps(state.flags, [{ key: 'name_revealed', op: 'set', value: true }]),
+  };
   return advance(s, script);
 }
 

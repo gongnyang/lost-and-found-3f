@@ -9,6 +9,7 @@ import {
   resolveLabels,
   selectChoice,
   step,
+  submitName,
   type VNState,
 } from './interpreter';
 
@@ -34,6 +35,8 @@ function makeState(overrides: Partial<VNState> = {}): VNState {
     sfxEvents: [],
     fxEvent: null,
     done: false,
+    mcName: null,
+    nameInputPending: false,
     ...overrides,
   };
 }
@@ -239,6 +242,55 @@ describe('battle/ending signalling', () => {
   });
 });
 
+describe('step — fx uiStrip', () => {
+  it('sets fxEvent with kind uiStrip and passes dur through, non-blocking', () => {
+    const r = step(makeState(), { t: 'fx', kind: 'uiStrip', dur: 800 });
+    expect(r.blocking).toBe(false);
+    expect(r.state.fxEvent).toEqual({ kind: 'uiStrip', dur: 800 });
+  });
+
+  it('supports dur:0 (즉시 해제 규약) and no-dur (유지) as distinct signals', () => {
+    const zero = step(makeState(), { t: 'fx', kind: 'uiStrip', dur: 0 });
+    expect(zero.state.fxEvent).toEqual({ kind: 'uiStrip', dur: 0 });
+    const noDur = step(makeState(), { t: 'fx', kind: 'uiStrip' });
+    expect(noDur.state.fxEvent).toEqual({ kind: 'uiStrip', dur: undefined });
+  });
+});
+
+describe('step/submitName — nameInput 커맨드', () => {
+  it('nameInput sets nameInputPending and blocks', () => {
+    const r = step(makeState(), { t: 'nameInput' });
+    expect(r.blocking).toBe(true);
+    expect(r.state.nameInputPending).toBe(true);
+  });
+
+  it('submitName is a no-op when nameInputPending is false', () => {
+    const s = makeState({ nameInputPending: false });
+    expect(submitName(s, [], '정하람')).toBe(s);
+  });
+
+  it('submitName is a no-op on blank input (미확정 유지)', () => {
+    const s = makeState({ nameInputPending: true });
+    expect(submitName(s, [], '   ')).toBe(s);
+    expect(s.nameInputPending).toBe(true);
+  });
+
+  it('submitName trims, stores mcName, sets name_revealed, clears pending, and resumes advance', () => {
+    const script: Command[] = [
+      { t: 'nameInput' },
+      { t: 'say', who: 'haram', text: '{mcName}, 그거 나 맞네.' },
+    ];
+    let s = advance(makeState(), script);
+    expect(s.nameInputPending).toBe(true);
+
+    s = submitName(s, script, '  정하람  ');
+    expect(s.nameInputPending).toBe(false);
+    expect(s.mcName).toBe('정하람');
+    expect(s.flags.name_revealed).toBe(true);
+    expect(s.dialogue?.text).toBe('{mcName}, 그거 나 맞네.'); // 텍스트 치환은 UI(DialogueBox) 책임
+  });
+});
+
 describe('createInitialState', () => {
   it('builds a clean state from a Scene', () => {
     const scene = { id: 's1', title: 'Scene 1', assets: {}, script: [] as Command[] };
@@ -247,5 +299,7 @@ describe('createInitialState', () => {
     expect(s.cursor).toBe(0);
     expect(s.flags).toEqual({});
     expect(s.settings).toEqual(DEFAULT_SETTINGS);
+    expect(s.mcName).toBeNull();
+    expect(s.nameInputPending).toBe(false);
   });
 });

@@ -9,6 +9,7 @@ import {
   consumeSfxEvents,
   createInitialState,
   selectChoice,
+  submitName as applyNameInput,
   DEFAULT_SETTINGS,
   type Settings,
   type VNState,
@@ -62,6 +63,7 @@ function toSaveSlotData(vn: VNState): Omit<SaveSlotData, 'ver' | 'savedAt'> {
     cg: vn.cg,
     cgUnlocked: vn.cgUnlocked,
     settings: vn.settings,
+    mcName: vn.mcName,
   };
 }
 
@@ -87,6 +89,8 @@ function fromSaveSlotData(data: SaveSlotData): VNState {
     sfxEvents: [],
     fxEvent: null,
     done: false,
+    mcName: data.mcName,
+    nameInputPending: false,
   };
 }
 
@@ -95,6 +99,7 @@ interface PlayStoreState {
   newGame: () => void;
   advanceClick: () => void;
   chooseOption: (index: number) => void;
+  submitName: (name: string) => void;
   saveToSlot: (slot: number) => void;
   loadFromSlot: (slot: number) => boolean;
   autoSave: () => void;
@@ -119,7 +124,7 @@ export const usePlayStore = create<PlayStoreState>((set, get) => ({
 
   advanceClick: () => {
     const vn = get().vn;
-    if (!vn || vn.choice || vn.pendingBattle || vn.ending) return;
+    if (!vn || vn.choice || vn.pendingBattle || vn.ending || vn.nameInputPending) return;
     set({ vn: runAdvance(vn) });
   },
 
@@ -131,9 +136,21 @@ export const usePlayStore = create<PlayStoreState>((set, get) => ({
     set({ vn: resolveJumps(afterChoice) });
   },
 
+  submitName: (name) => {
+    const vn = get().vn;
+    if (!vn || !vn.nameInputPending) return;
+    const script = getScene(vn.sceneId)?.script ?? [];
+    const after = resolveJumps(applyNameInput(vn, script, name));
+    if (after.mcName) {
+      const g = loadGlobal();
+      saveGlobal({ ...g, mcName: after.mcName });
+    }
+    set({ vn: after });
+  },
+
   saveToSlot: (slot) => {
     const vn = get().vn;
-    if (!vn || vn.choice) return; // 선택지 도중 세이브는 막는다(복원 모호성 방지)
+    if (!vn || vn.choice || vn.nameInputPending) return; // 선택지/이름입력 도중 세이브는 막는다(복원 모호성 방지)
     saveSlot(slot, toSaveSlotData(vn));
   },
 
@@ -146,7 +163,7 @@ export const usePlayStore = create<PlayStoreState>((set, get) => ({
 
   autoSave: () => {
     const vn = get().vn;
-    if (!vn || vn.choice) return;
+    if (!vn || vn.choice || vn.nameInputPending) return;
     saveSlot(0, toSaveSlotData(vn));
   },
 

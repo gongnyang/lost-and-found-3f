@@ -729,6 +729,69 @@ button {
   color: var(--paper-inner);
 }
 
+/* ---------- 이름 입력 오버레이 (폴라로이드 카드 모티프) — true1s05 ---------- */
+
+.nameinput-panel {
+  width: min(360px, 88vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--paper);
+  border: var(--dialogue-border);
+  border-radius: var(--dialogue-radius);
+  box-shadow: var(--dialogue-shadow);
+  transform: rotate(var(--dialogue-rotate));
+  padding: 20px 20px 24px;
+}
+
+.nameinput-photo {
+  aspect-ratio: 4 / 3;
+  background: var(--paper-inner);
+  border: 1px solid var(--line-hairline);
+  border-radius: 3px;
+}
+
+.nameinput-caption {
+  margin: 0;
+  color: var(--ink-strong);
+  font-family: var(--font-serif);
+  font-size: var(--text-h1);
+  letter-spacing: var(--ls-serif);
+  text-align: center;
+}
+
+.nameinput-field {
+  width: 100%;
+  background: var(--paper-inner);
+  border: 1px solid var(--line-hairline);
+  border-radius: 4px;
+  padding: 10px 12px;
+  color: var(--ink-strong);
+  font-family: var(--font-sans);
+  font-size: var(--text-dialogue);
+  text-align: center;
+}
+
+.nameinput-field::placeholder {
+  color: var(--muted);
+}
+
+.nameinput-confirm {
+  align-self: center;
+  background: var(--accent-terracotta);
+  color: var(--paper-inner);
+  border: none;
+  border-radius: var(--choice-radius);
+  padding: var(--choice-pad);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nameinput-confirm:hover {
+  filter: brightness(1.08);
+}
+
 /* ---------- CG 뷰어 ---------- */
 
 .cg-viewer {

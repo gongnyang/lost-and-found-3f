@@ -42,6 +42,7 @@ describe('saveSlot / loadSlot — 스냅샷 왕복', () => {
       cg: null,
       cgUnlocked: [],
       settings: DEFAULT_SETTINGS,
+      mcName: '정하람',
     };
 
     saveSlot(3, snapshot);
@@ -56,7 +57,34 @@ describe('saveSlot / loadSlot — 스냅샷 왕복', () => {
     expect(loaded?.dialogue).toEqual(snapshot.dialogue);
     expect(loaded?.bg).toBe(snapshot.bg);
     expect(loaded?.settings).toEqual(snapshot.settings);
+    expect(loaded?.mcName).toBe('정하람');
     expect(typeof loaded?.savedAt).toBe('string');
+  });
+
+  it('migrates a pre-mcName (ver 1 shaped) slot payload to mcName: null', async () => {
+    const { loadSlot, SAVE_VERSION } = await import('./save');
+    // ver 1 시절 저장분엔 mcName 필드가 없었다 — 직접 raw 페이로드를 넣어 마이그레이션 경로를 검증.
+    const legacy = {
+      ver: 1,
+      sceneId: 'ch01_common',
+      sceneTitle: '1장',
+      cursor: 0,
+      flags: {},
+      stage: [],
+      speaker: null,
+      dialogue: null,
+      choice: null,
+      bg: null,
+      bgm: null,
+      cg: null,
+      cgUnlocked: [],
+      settings: {},
+      savedAt: '2026-01-01T00:00:00.000Z',
+    };
+    window.localStorage.setItem('miyensi:save:5', JSON.stringify(legacy));
+    const loaded = loadSlot(5);
+    expect(loaded?.ver).toBe(SAVE_VERSION);
+    expect(loaded?.mcName).toBeNull();
   });
 
   it('slot 0 is the autosave slot and is independent from manual slots', async () => {
@@ -76,6 +104,7 @@ describe('saveSlot / loadSlot — 스냅샷 왕복', () => {
       cg: null,
       cgUnlocked: [],
       settings: DEFAULT_SETTINGS,
+      mcName: null,
     };
     saveSlot(0, { ...base, sceneId: 'auto' });
     saveSlot(1, { ...base, sceneId: 'manual' });
@@ -100,6 +129,7 @@ describe('saveSlot / loadSlot — 스냅샷 왕복', () => {
       cg: null,
       cgUnlocked: [],
       settings: DEFAULT_SETTINGS,
+      mcName: null,
     };
     expect(() => saveSlot(10, base)).toThrow();
     expect(() => saveSlot(-1, base)).toThrow();
@@ -127,5 +157,13 @@ describe('global data — endings/CG gallery persist independently of save slots
     unlockCgGallery(['aoi_route_1', 'haru_route_1']);
     const g = loadGlobal();
     expect(g.cgGallery.sort()).toEqual(['aoi_route_1', 'haru_route_1']);
+  });
+
+  it('defaults mcName to null and mirrors an explicit save', async () => {
+    const { loadGlobal, saveGlobal } = await import('./save');
+    expect(loadGlobal().mcName).toBeNull();
+    const g = loadGlobal();
+    saveGlobal({ ...g, mcName: '정하람' });
+    expect(loadGlobal().mcName).toBe('정하람');
   });
 });

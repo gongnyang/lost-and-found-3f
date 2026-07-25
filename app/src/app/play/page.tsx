@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { usePlayStore } from '@/engine/state';
 import { DEFAULT_SETTINGS } from '@/engine/interpreter';
 import { playBgm, playSfx, stopAllAudio } from '@/engine/audio';
+import { FLAGS } from '@/data/flags';
 import DialogueBox from '@/components/vn/DialogueBox';
 import CharacterStage from '@/components/vn/CharacterStage';
 import ChoiceMenu from '@/components/vn/ChoiceMenu';
@@ -16,6 +17,7 @@ import QuickMenu from '@/components/vn/QuickMenu';
 import Backlog from '@/components/vn/Backlog';
 import SaveLoadModal from '@/components/vn/SaveLoadModal';
 import CGViewer from '@/components/vn/CGViewer';
+import NameInputOverlay from '@/components/vn/NameInputOverlay';
 
 type ModalKind = null | 'backlog' | 'save' | 'load' | 'settings';
 
@@ -27,6 +29,7 @@ export default function PlayPage() {
   const newGame = usePlayStore((s) => s.newGame);
   const advanceClick = usePlayStore((s) => s.advanceClick);
   const chooseOption = usePlayStore((s) => s.chooseOption);
+  const submitName = usePlayStore((s) => s.submitName);
   const saveToSlot = usePlayStore((s) => s.saveToSlot);
   const loadFromSlot = usePlayStore((s) => s.loadFromSlot);
   const autoSave = usePlayStore((s) => s.autoSave);
@@ -36,6 +39,7 @@ export default function PlayPage() {
   const finishEnding = usePlayStore((s) => s.finishEnding);
 
   const [modal, setModal] = useState<ModalKind>(null);
+  const [uiStripped, setUiStripped] = useState(false); // fx uiStrip → data-ui-state="unravel" 토글
   const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 직접 /play로 진입한 경우(새로고침 등) 대비 — 진행 중 세이브가 없으면 새 게임으로 시작.
@@ -68,12 +72,38 @@ export default function PlayPage() {
     consumeSfx();
   }, [sfxEvents, sfxVolume, consumeSfx]);
 
-  // fx 1회성 이벤트 소비(연출은 P3에서 확장 — 지금은 신호만 지우고 넘어간다)
+  // fx 1회성 이벤트 소비. uiStrip은 data-ui-state="unravel" 토글로 실제 연출을 갖는다 —
+  // dur 있으면 그 시간 뒤 해제, dur 없으면 유지, dur:0은 즉시 해제 규약(§0 델타).
+  // 그 외 kind(shake/flash/blurMemory/wait)는 아직 신호만 지우고 넘어가는 스텁 그대로.
   useEffect(() => {
     if (!fxEvent) return;
+    if (fxEvent.kind === 'uiStrip') {
+      if (fxEvent.dur === 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setUiStripped(false);
+        consumeFx();
+        return;
+      }
+      setUiStripped(true);
+      if (fxEvent.dur === undefined) {
+        consumeFx();
+        return;
+      }
+      const t = setTimeout(() => {
+        setUiStripped(false);
+        consumeFx();
+      }, fxEvent.dur);
+      return () => clearTimeout(t);
+    }
     const t = setTimeout(() => consumeFx(), fxEvent.dur ?? 400);
     return () => clearTimeout(t);
   }, [fxEvent, consumeFx]);
+
+  // 씬이 바뀌면 UI 박리 연출은 초기화 — 다음 씬에 새어 들어가지 않게 한다.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUiStripped(false);
+  }, [sceneId]);
 
   // battle 진입
   useEffect(() => {
@@ -125,7 +155,7 @@ export default function PlayPage() {
   if (!vn) return <div className="play-screen" />;
 
   return (
-    <div className="play-screen" data-scene="present">
+    <div className="play-screen" data-scene="present" data-ui-state={uiStripped ? 'unravel' : undefined}>
       <div className="art-layer">
         {vn.bg && <div className="bg-layer" style={{ backgroundImage: `url(${vn.bg})` }} />}
         <CharacterStage stage={vn.stage} speaker={vn.speaker} />
@@ -150,6 +180,8 @@ export default function PlayPage() {
             text={vn.dialogue.text}
             textSpeedMs={vn.settings.textSpeedMs}
             skip={vn.settings.skip}
+            nameRevealed={vn.flags[FLAGS.NAME_REVEALED] === true}
+            mcName={vn.mcName}
             onAdvance={manualAdvance}
             onTypingComplete={handleTypingComplete}
             key={`${vn.sceneId}:${vn.cursor}`}
@@ -158,6 +190,7 @@ export default function PlayPage() {
       </div>
 
       {vn.choice && <ChoiceMenu items={vn.choice} onSelect={handleChoose} />}
+      {vn.nameInputPending && <NameInputOverlay onConfirm={submitName} />}
 
       {modal === 'backlog' && <Backlog entries={vn.backlog} onClose={() => setModal(null)} />}
       {(modal === 'save' || modal === 'load') && (
