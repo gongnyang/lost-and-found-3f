@@ -1,0 +1,5 @@
+# Vercel Root Directory = app/ 로 지정되므로, 이 파일은 레포 루트에서 app/ 밖의
+# 비배포 디렉터리를 제외하기 위한 것. §1: "pipeline/과 docs/는 Vercel 빌드에서 제외".
+pipeline/
+docs/
+trailer/

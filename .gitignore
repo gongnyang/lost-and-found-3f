@@ -1,0 +1,21 @@
+# 레포 루트 — app/ 내부는 app/.gitignore(create-next-app 기본)가 이미 처리.
+# 여기서는 pipeline/ 비배포 작업장의 대용량·중간 산출물과 OS/에디터 잡파일만 다룬다.
+
+# pipeline 작업장 — 원본 회수분·검수 대기열은 용량이 크고 재생성 가능하므로 커밋하지 않는다.
+pipeline/raw/
+pipeline/review/
+pipeline/sprite/*.png
+pipeline/sprite/*.webp
+
+# 최종 배포용 산출물이 아닌 트레일러 작업 소스(게이트④ 이후 별도 관리)
+trailer/raw/
+trailer/render/
+
+# OS/에디터
+.DS_Store
+Thumbs.db
+*.swp
+
+# 로그
+*.log
+npm-debug.log*
