@@ -2,7 +2,7 @@
 
 최종 적재 위치: `app/public/assets/audio/{bgm,sfx}/` (전부 ogg vorbis, 볼륨 노멀라이즈 BGM -14 LUFS / SFX -16 LUFS 또는 피크 -1dB)
 변환 스크립트: `pipeline/audio/scripts/build_audio.sh` (BGM q2, SFX q4)
-총 용량: 약 12.2 MB
+총 용량: 약 12.8 MB
 
 ## BGM (7곡) — 전부 Kevin MacLeod, CC-BY 4.0 (크레딧 표기 필요)
 
@@ -28,7 +28,7 @@ Licensed under Creative Commons: By Attribution 4.0
 https://creativecommons.org/licenses/by/4.0/
 ```
 
-## SFX (13종)
+## SFX (23종)
 
 ### A. media-use 스킬 번들 (원출처 Pixabay) — Pixabay Content License, 크레딧 불요
 
@@ -57,9 +57,28 @@ https://creativecommons.org/licenses/by/4.0/
 
 ### C. Freesound — CC0 (크레딧 불요, 기록용 표기)
 
-| 파일 | 출처 | 저작자 | 라이선스 |
-|---|---|---|---|
-| sfx/school-chime.ogg | https://freesound.org/people/melokacool/sounds/662162/ ("School Bell Chime", HQ 프리뷰 mp3) | melokacool | CC0 |
+| 파일 | 출처 | 저작자 | 라이선스 | 가공 |
+|---|---|---|---|---|
+| sfx/school-chime.ogg | https://freesound.org/people/melokacool/sounds/662162/ ("School Bell Chime", HQ 프리뷰 mp3) | melokacool | CC0 | 원본 그대로 |
+| sfx/sfx_brush_paper.ogg | https://freesound.org/people/deleted_user_7146007/sounds/383867/ ("Pencil Writing on Paper") | deleted_user_7146007 | CC0 | 1.0–4.0s 구간 + 페이드 |
+| sfx/sfx_paper_cup.ogg | https://freesound.org/people/Sheyvan/sounds/831438/ ("Papercup lid") | Sheyvan | CC0 | 0–1.2s 구간 + 페이드아웃 |
+| sfx/sfx_eraser.ogg | https://freesound.org/people/Paulabej/sounds/650472/ ("Eraser-Notebook.wav") | Paulabej | CC0 | 5.25s부터 1.0s(문지름 1회) |
+| sfx/sfx_drip.ogg | https://freesound.org/people/beskhu/sounds/273870/ ("water drop 1.aif") | beskhu | CC0 | 원본 그대로 |
+| sfx/sfx_iv_drop.ogg | https://freesound.org/people/tilano408/sounds/445656/ ("7-water drop.wav") | tilano408 | CC0 | 원본 그대로 |
+| sfx/sfx_rain.ogg | https://freesound.org/people/bastipictures/sounds/243781/ ("rain against window 2") | bastipictures | CC0 | 10–30s 구간 20초, -18 LUFS, 1s 페이드 인/아웃(루프용) |
+| sfx/sfx_knock.ogg | https://freesound.org/people/NachtmahrTV/sounds/571671/ ("Knock on Door 2") | NachtmahrTV | CC0 | 1.25s부터 1.0s(노크 1회) |
+| sfx/sfx_tape.ogg | https://freesound.org/people/WeeJee_vdH/sounds/267712/ ("Ripping Off Tape") | WeeJee_vdH | CC0 | 원본 그대로(박스 테이프 뜯기) |
+
+※ Freesound 항목은 전부 HQ 프리뷰(mp3) 파생본. 각 페이지에서 CC0(creativecommons.org/publicdomain/zero/1.0/) 확인함.
+
+### D. ffmpeg 자체 합성 — 라이선스 해당 없음 (본 프로젝트 산출물)
+
+| 파일 | 생성 방법 | 용도 |
+|---|---|---|
+| sfx/sfx_static.ogg | ffmpeg anoisesrc(white, seed=42) + 밴드패스 300–6500Hz + tremolo, 2.5s | TV/라디오 지직 노이즈(반전 연출) |
+| sfx/sfx_ekg.ogg | ffmpeg sine 880Hz, 0.9s 주기 0.12s 게이트 펄스 ×4, 3.6s | 심전도 모니터 비프(병원 씬) |
+
+생성 커맨드는 대화 로그 및 `pipeline/audio/scripts/` 참조. 외부 저작물 미포함 — 게임과 동일 라이선스로 취급 가능.
 
 ## 루프 메모 (BGM)
 
