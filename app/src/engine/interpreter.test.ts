@@ -91,26 +91,26 @@ describe('resolveLabels', () => {
 
 describe('step — say/show/expr/move/hide/bg', () => {
   it('say sets dialogue, speaker, backlog and blocks', () => {
-    const result = step(makeState(), { t: 'say', who: 'aoi', text: 'hi' });
+    const result = step(makeState(), { t: 'say', who: 'sea', text: 'hi' });
     expect(result.blocking).toBe(true);
-    expect(result.state.dialogue).toEqual({ who: 'aoi', text: 'hi', expr: undefined });
-    expect(result.state.speaker).toBe('aoi');
-    expect(result.state.backlog).toEqual([{ who: 'aoi', text: 'hi' }]);
+    expect(result.state.dialogue).toEqual({ who: 'sea', text: 'hi', expr: undefined });
+    expect(result.state.speaker).toBe('sea');
+    expect(result.state.backlog).toEqual([{ who: 'sea', text: 'hi' }]);
   });
 
   it('show adds an actor to stage; expr/move update it in place', () => {
     let s = makeState();
-    s = step(s, { t: 'show', who: 'aoi', expr: 'neutral', pos: 'center' }).state;
-    expect(s.stage).toEqual([{ who: 'aoi', expr: 'neutral', pos: 'center' }]);
-    s = step(s, { t: 'expr', who: 'aoi', expr: 'smile' }).state;
+    s = step(s, { t: 'show', who: 'sea', expr: 'neutral', pos: 'center' }).state;
+    expect(s.stage).toEqual([{ who: 'sea', expr: 'neutral', pos: 'center' }]);
+    s = step(s, { t: 'expr', who: 'sea', expr: 'smile' }).state;
     expect(s.stage[0].expr).toBe('smile');
-    s = step(s, { t: 'move', who: 'aoi', pos: 'left' }).state;
+    s = step(s, { t: 'move', who: 'sea', pos: 'left' }).state;
     expect(s.stage[0].pos).toBe('left');
   });
 
   it('hide removes the actor', () => {
-    let s = makeState({ stage: [{ who: 'aoi', expr: 'neutral', pos: 'center' }] });
-    s = step(s, { t: 'hide', who: 'aoi' }).state;
+    let s = makeState({ stage: [{ who: 'sea', expr: 'neutral', pos: 'center' }] });
+    s = step(s, { t: 'hide', who: 'sea' }).state;
     expect(s.stage).toEqual([]);
   });
 

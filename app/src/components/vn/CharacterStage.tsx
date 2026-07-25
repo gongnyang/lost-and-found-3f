@@ -50,7 +50,7 @@ function CharacterSprite({ who, expr, pos, dim }: CharacterSpriteProps) {
     return () => cancelAnimationFrame(t);
   }, []);
 
-  // 깜빡임: 눈감음 배리언트가 있는 캐릭터에서만 동작(placeholder 단계엔 없어서 비활성).
+  // 깜빡임: 눈감음(closed) 배리언트가 있는 캐릭터에서만 동작.
   useEffect(() => {
     if (!meta?.hasBlinkVariant) return;
     let timer: ReturnType<typeof setTimeout>;
@@ -82,7 +82,7 @@ function CharacterSprite({ who, expr, pos, dim }: CharacterSpriteProps) {
         {prevSrc && <img className="char-img char-img--under" src={prevSrc} alt="" draggable={false} />}
         <img
           className="char-img"
-          src={blinkOn && meta?.hasBlinkVariant ? currSrc.replace(/\.svg$/, '_blink.svg') : currSrc}
+          src={blinkOn && meta?.hasBlinkVariant ? standingSrc(who, 'closed') : currSrc}
           alt={meta?.name ?? who}
           draggable={false}
         />

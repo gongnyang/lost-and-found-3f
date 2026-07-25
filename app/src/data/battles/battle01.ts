@@ -17,8 +17,8 @@ export interface BattleUnit {
   name: string;
   maxHp: number;
   spd: number;
-  sheet: string; // /assets/sd/aoi/sheet.svg (placeholder — 최종은 .webp)
-  manifest: string; // sprite-gen frame_layout manifest 경로
+  sheet: string; // /assets/sd/{id}/sheet.webp — 실제 SD 시트
+  manifest: string; // SpritePlayer 소비용 manifest.app.json 경로 (actions.{idle,attack}.frames)
   skills: Skill[]; // 아군 4종 고정: 일반공격/강공격(게이지)/버프·힐/필살기
 }
 
@@ -70,27 +70,27 @@ const ultimate: Skill = {
   fx: 'flash',
 };
 
-function unit(id: 'aoi' | 'haru' | 'sena', name: string, maxHp: number, spd: number): BattleUnit {
+function unit(id: 'sea' | 'riwon' | 'yunseul', name: string, maxHp: number, spd: number): BattleUnit {
   return {
     id,
     name,
     maxHp,
     spd,
-    sheet: `/assets/sd/${id}/sheet.svg`,
-    manifest: `/assets/sd/${id}/manifest.json`,
+    sheet: `/assets/sd/${id}/sheet.webp`,
+    manifest: `/assets/sd/${id}/manifest.app.json`,
     skills: [basicAttack, heavyAttack, partyHeal, ultimate],
   };
 }
 
 export const battle01: BattleDef = {
   id: 'battle01',
-  party: [unit('aoi', 'Aoi', 100, 12), unit('haru', 'Haru', 90, 15), unit('sena', 'Sena', 95, 10)],
+  party: [unit('sea', '문세아', 100, 12), unit('riwon', '백리원', 90, 15), unit('yunseul', '강윤슬', 95, 10)],
   enemy: {
     id: 'enemy_boss1',
     name: '???',
     maxHp: 260,
     spd: 8,
-    sheet: '/assets/sd/aoi/sheet.svg', // 보스 시트 placeholder 없음 — 임시로 aoi 시트 재사용
+    sheet: '/assets/sd/aoi/sheet.svg', // 보스 시트 없음 — 기존 SVG 플레이스홀더(sd/aoi, 유지) 재사용
     manifest: '/assets/sd/aoi/manifest.json',
     skills: [basicAttack],
   },

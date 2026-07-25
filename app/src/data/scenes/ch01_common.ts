@@ -8,17 +8,17 @@ export const ch01_common: Scene = {
   id: 'ch01_common',
   title: '1장 · 소리 없는 아침',
   assets: {
-    chars: ['aoi', 'haru', 'sena'],
+    chars: ['sea', 'riwon', 'yunseul'],
     bgs: ['/assets/bg/classroom.svg', '/assets/bg/rooftop.svg'],
   },
   script: [
     { t: 'bg', src: '/assets/bg/classroom.svg', fx: 'fade' },
-    { t: 'show', who: 'aoi', expr: 'neutral', pos: 'center', enter: 'fadeIn' },
-    { t: 'say', who: 'aoi', text: '...또, 같은 꿈을 꿨어.' },
+    { t: 'show', who: 'sea', expr: 'neutral', pos: 'center', enter: 'fadeIn' },
+    { t: 'say', who: 'sea', text: '...또, 같은 꿈을 꿨어.' },
     { t: 'say', who: null, text: '창밖의 빛이 유리에 부딪혀 조용히 흩어진다.' },
-    { t: 'show', who: 'haru', expr: 'neutral', pos: 'right', enter: 'slideR' },
-    { t: 'say', who: 'haru', text: '아오이, 여기 있었네. 아침부터 혼자 뭐 해?' },
-    { t: 'say', who: 'aoi', expr: 'sad', text: '...아무것도. 그냥 잠깐 멍하니 있었어.' },
+    { t: 'show', who: 'riwon', expr: 'neutral', pos: 'right', enter: 'slideR' },
+    { t: 'say', who: 'riwon', text: '세아, 여기 있었네. 아침부터 혼자 뭐 해?' },
+    { t: 'say', who: 'sea', expr: 'sad', text: '...아무것도. 그냥 잠깐 멍하니 있었어.' },
     {
       t: 'choice',
       items: [
@@ -27,21 +27,21 @@ export const ch01_common: Scene = {
           goto: 'ch01_kind',
           set: [
             { key: FLAGS.DEMO_CHOSE_KIND, op: 'set', value: true },
-            { key: FLAGS.AFF_HARU, op: 'add', value: 2 },
+            { key: FLAGS.AFF_RIWON, op: 'add', value: 2 },
           ],
         },
         {
           label: '...그냥 신경 쓰지 마.',
           goto: 'ch01_cold',
-          set: [{ key: FLAGS.AFF_HARU, op: 'add', value: -1 }],
+          set: [{ key: FLAGS.AFF_RIWON, op: 'add', value: -1 }],
         },
       ],
     },
 
     { t: 'label', id: 'ch01_kind' },
-    { t: 'say', who: 'haru', expr: 'smile', text: '그렇구나. 무슨 일이든 나한테 말해도 돼.' },
-    { t: 'say', who: 'aoi', expr: 'smile', text: '...고마워, 하루.' },
-    { t: 'set', ops: [{ key: FLAGS.DEMO_MET_HARU, op: 'set', value: true }] },
+    { t: 'say', who: 'riwon', expr: 'smile', text: '그렇구나. 무슨 일이든 나한테 말해도 돼.' },
+    { t: 'say', who: 'sea', expr: 'smile', text: '...고마워, 리원.' },
+    { t: 'set', ops: [{ key: FLAGS.DEMO_MET_RIWON, op: 'set', value: true }] },
     {
       t: 'if',
       cond: { key: FLAGS.DEMO_CHOSE_KIND, cmp: 'eq', value: true },
@@ -50,24 +50,24 @@ export const ch01_common: Scene = {
     },
 
     { t: 'label', id: 'ch01_cold' },
-    { t: 'say', who: 'haru', expr: 'sad', text: '...그래, 알겠어.' },
-    { t: 'say', who: 'aoi', expr: 'neutral', text: '(마음이 조금 무거워졌다.)' },
+    { t: 'say', who: 'riwon', expr: 'sad', text: '...그래, 알겠어.' },
+    { t: 'say', who: 'sea', expr: 'neutral', text: '(마음이 조금 무거워졌다.)' },
 
     { t: 'label', id: 'ch01_continue' },
     { t: 'bg', src: '/assets/bg/rooftop.svg', fx: 'cut' },
-    { t: 'hide', who: 'haru', exit: 'fadeOut' },
-    { t: 'show', who: 'sena', expr: 'neutral', pos: 'left', enter: 'slideL' },
-    { t: 'say', who: 'sena', text: '...여기 왜 혼자 있어?' },
-    { t: 'say', who: 'aoi', text: '그냥 바람 좀 쐬려고. 너는?' },
+    { t: 'hide', who: 'riwon', exit: 'fadeOut' },
+    { t: 'show', who: 'yunseul', expr: 'neutral', pos: 'left', enter: 'slideL' },
+    { t: 'say', who: 'yunseul', text: '...여기 왜 혼자 있어?' },
+    { t: 'say', who: 'sea', text: '그냥 바람 좀 쐬려고. 너는?' },
     {
       t: 'if',
-      cond: { key: FLAGS.AFF_HARU, cmp: 'gte', value: 2 },
+      cond: { key: FLAGS.AFF_RIWON, cmp: 'gte', value: 2 },
       then: 'ch01_warm',
       else: 'ch01_neutral',
     },
 
     { t: 'label', id: 'ch01_warm' },
-    { t: 'say', who: 'sena', expr: 'smile', text: '...오늘은 다들 좀 다정하네.' },
+    { t: 'say', who: 'yunseul', expr: 'smile', text: '...오늘은 다들 좀 다정하네.' },
     { t: 'set', ops: [{ key: FLAGS.DEMO_ROOFTOP_UNLOCKED, op: 'set', value: true }] },
     {
       t: 'if',
@@ -77,7 +77,7 @@ export const ch01_common: Scene = {
     },
 
     { t: 'label', id: 'ch01_neutral' },
-    { t: 'say', who: 'sena', expr: 'neutral', text: '...그렇구나.' },
+    { t: 'say', who: 'yunseul', expr: 'neutral', text: '...그렇구나.' },
 
     { t: 'label', id: 'ch01_finale' },
     { t: 'fx', kind: 'blurMemory', dur: 800 },

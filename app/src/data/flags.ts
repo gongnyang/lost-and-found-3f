@@ -2,12 +2,12 @@
 // 플래그 키를 참조한다 (문자열 리터럴 직접 타이핑 금지).
 
 export const FLAGS = {
-  AFF_AOI: 'aff_aoi',
-  AFF_HARU: 'aff_haru',
-  AFF_SENA: 'aff_sena',
+  AFF_SEA: 'aff_sea',
+  AFF_RIWON: 'aff_riwon',
+  AFF_YUNSEUL: 'aff_yunseul',
 
   // 데모 진행 플래그
-  DEMO_MET_HARU: 'demo_met_haru',
+  DEMO_MET_RIWON: 'demo_met_riwon',
   DEMO_CHOSE_KIND: 'demo_chose_kind',
   DEMO_ROOFTOP_UNLOCKED: 'demo_rooftop_unlocked',
   DEMO_REMEMBERED: 'demo_remembered',
@@ -20,7 +20,7 @@ export type FlagKey = (typeof FLAGS)[keyof typeof FLAGS];
 
 /** 호감도 키 초기값 — 새 게임 시작 시 flags에 병합. */
 export const INITIAL_AFFECTION: Record<string, number> = {
-  [FLAGS.AFF_AOI]: 0,
-  [FLAGS.AFF_HARU]: 0,
-  [FLAGS.AFF_SENA]: 0,
+  [FLAGS.AFF_SEA]: 0,
+  [FLAGS.AFF_RIWON]: 0,
+  [FLAGS.AFF_YUNSEUL]: 0,
 };

@@ -2,7 +2,8 @@
 
 // SpritePlayer(~50줄) — §3 스텁. manifest `{ actions: { idle: { frames:[{x,y,w,h}], fps, loop } } }`
 // 을 소비해 background-position + rAF 누적시간으로 프레임을 계산한다. onComplete로 시퀀서 연결.
-// 지금 단계는 시트가 placeholder라 idle/attack 두 액션만 실존, hit/victory 등은 P3C에서 추가.
+// 실제 SD 시트(sea/riwon/yunseul)도 idle/attack 두 액션만 존재, hit/victory 등은 P3C에서 추가
+// (없는 액션은 기존 CSS 폴백 유지).
 
 import { useEffect, useRef, useState } from 'react';
 

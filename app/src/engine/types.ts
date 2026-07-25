@@ -1,6 +1,6 @@
 // 씬 스크립트 스키마 — docs/ARCHITECTURE.md §2.1 정본. 글자 그대로 구현, 임의 확장 금지.
 
-export type CharId = 'aoi' | 'haru' | 'sena' | 'mc' | 'mob';
+export type CharId = 'sea' | 'riwon' | 'yunseul' | 'mc' | 'mob';
 export type Expr =
   | 'neutral'
   | 'smile'
@@ -11,7 +11,8 @@ export type Expr =
   | 'surprise'
   | 'worry'
   | 'serious'
-  | 'cry'; // 캐릭터당 6~10종
+  | 'cry'
+  | 'closed'; // 캐릭터당 6~10종 (closed=깜빡임용 눈감음 배리언트)
 export type StagePos = 'left' | 'center' | 'right' | 'offL' | 'offR';
 
 export type Command =

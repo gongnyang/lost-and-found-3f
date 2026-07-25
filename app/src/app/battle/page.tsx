@@ -18,7 +18,7 @@ export default function BattlePage() {
   const [action, setAction] = useState<'idle' | 'attack'>('idle');
   const [manifest, setManifest] = useState<SpriteManifest | null>(null);
 
-  const unit = battle01.party[0]; // aoi — placeholder 시트가 있는 유일한 유닛
+  const unit = battle01.party[0]; // 문세아(sea) — 실제 SD 시트+manifest.app.json 로딩 검증용
 
   useEffect(() => {
     fetch(unit.manifest)
