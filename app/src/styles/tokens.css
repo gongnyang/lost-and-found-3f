@@ -48,18 +48,22 @@
   --text-battle-num: 0.875rem;
   --text-plate-grain-mask: 0.02;
 
-  /* ---- dialogue box ---- */
-  --dialogue-maxw: 920px;
-  --dialogue-minh: 132px;
-  --dialogue-minh-mobile: 108px;
+  /* ---- dialogue box ----
+   * P4-pre 레이아웃 폴리시: 920px 고정폭은 실기기에서 화면 대비 너무 작게 떠 보여
+   * 70~80vw(상한 1100px) 가변폭으로 조정. --dialogue-width가 실제 폭 계산식이고
+   * --dialogue-maxw는 그 상한(clamp 상수)로 의미가 유지된다. */
+  --dialogue-maxw: 1100px;
+  --dialogue-width: min(76vw, var(--dialogue-maxw));
+  --dialogue-minh: 176px;
+  --dialogue-minh-mobile: 122px;
   --dialogue-bottom-offset: 24px;
   --dialogue-bg: rgba(241, 230, 210, 0.86);
-  --dialogue-blur: 3px;
+  --dialogue-blur: 4px;
   --dialogue-border: 1px solid rgba(59, 46, 34, 0.18);
   --dialogue-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
   --dialogue-radius: 6px;
   --dialogue-rotate: -0.4deg;
-  --dialogue-pad: 20px 24px;
+  --dialogue-pad: 22px 30px;
   --dialogue-pad-mobile: 16px 18px;
   --nameplate-offset-y: -10px;
   --nameplate-radius: 4px;

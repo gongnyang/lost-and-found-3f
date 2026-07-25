@@ -11,9 +11,9 @@ import { getCharacterMeta, standingSrc } from '@/data/characters';
 
 const POS_LEFT_PCT: Record<StagePos, number> = {
   offL: -20,
-  left: 22,
+  left: 20,
   center: 50,
-  right: 78,
+  right: 80,
   offR: 120,
 };
 

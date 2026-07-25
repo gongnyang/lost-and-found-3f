@@ -238,10 +238,13 @@ button {
 }
 
 .char-slot {
+  /* 스탠딩 아트(1024x1536, AR 2:3)가 화면 높이의 85~95%를 차지하도록 height를 크게
+     잡고, width는 vw 기반으로 여유 있게 잡아 object-fit:contain이 실제로 height를
+     기준으로 스케일하게 한다 — width가 좁은 화면(모바일)에서만 스케일의 한계가 된다. */
   position: absolute;
   bottom: 0;
-  width: 240px;
-  height: 70vh;
+  width: clamp(220px, 40vw, 640px);
+  height: 92vh;
   transition: left 0.4s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -308,7 +311,7 @@ button {
 
 .dialogue-box {
   position: relative;
-  max-width: var(--dialogue-maxw);
+  width: var(--dialogue-width);
   min-height: var(--dialogue-minh);
   margin: 0 auto;
   background: var(--dialogue-bg);
@@ -390,7 +393,6 @@ button {
 @media (max-width: 640px) {
   .dialogue-box {
     width: calc(100% - 24px);
-    max-width: none;
     min-height: var(--dialogue-minh-mobile);
     padding: var(--dialogue-pad-mobile);
     padding-top: calc(var(--dialogue-pad-mobile) + 8px);
@@ -398,6 +400,15 @@ button {
 
   .bottom-ui {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .choice-menu {
+    width: calc(100% - 24px);
+  }
+
+  .char-slot {
+    width: clamp(150px, 52vw, 300px);
+    height: 76vh;
   }
 }
 
@@ -412,7 +423,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: var(--choice-gap);
-  width: min(var(--dialogue-maxw), calc(100% - 48px));
+  width: min(var(--dialogue-width), calc(100% - 48px));
 }
 
 .choice-btn {
