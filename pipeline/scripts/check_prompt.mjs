@@ -29,6 +29,12 @@ for (const [i, line] of lines.entries()) {
   // id → 필요한 페르소나 목록. bg_* = 배경(페르소나 불요), cg_* = CG 매핑표, 그 외 = 기존 prefix 규칙.
   const requiredPersonas = (id) => {
     if (!id) return null;
+    if (id.startsWith('sp-')) {
+      if (id.startsWith('sp-sea-')) return ['sea'];
+      if (id.startsWith('sp-riwon-')) return ['riwon'];
+      if (id.startsWith('sp-yunseul-')) return ['yunseul'];
+      return null;
+    }
     if (id.startsWith('bg_')) return [];
     if (id.startsWith('cg_')) {
       if (id.startsWith('cg_sea')) return ['sea'];
@@ -36,6 +42,7 @@ for (const [i, line] of lines.entries()) {
       if (id.startsWith('cg_yun')) return ['yunseul'];
       if (id.startsWith('cg_true_02')) return ['sea', 'riwon', 'yunseul'];
       if (id.startsWith('cg_true_01') || id.startsWith('cg_common')) return []; // 오브젝트 CG
+      if (id.startsWith('cg_signboard') || id.startsWith('cg_ledger_return')) return []; // 오브젝트 CG (갭픽스)
       return null;
     }
     const single = Object.keys(personas).find((n) => id.startsWith(n));
