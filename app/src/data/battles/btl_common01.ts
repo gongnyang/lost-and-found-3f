@@ -1,7 +1,6 @@
 // 전투1 「검열자」 — docs/STORY.md §7.1 (공통 1장 / c1s05). 목표: 3턴 버티기(격파 아님,
-// 적 HP는 '검열 강도' 게이지). 기존 battle01.ts 구조 그대로 재사용 — 수치는 STORY.md에
-// 지시가 없어 상식선(밸런싱은 후속 P3C). 적 3체(검열자·낙서 ×3)는 "검열 강도" 공유 게이지
-// 하나로 표현(§7 공통 규칙: "적 HP는 검열 강도 게이지로 표시").
+// 적 HP는 '검열 강도' 게이지). 적 3체(검열자·낙서 ×3)는 "검열 강도" 공유 게이지 하나로
+// 표현(§7 공통 규칙). 수치는 pipeline/scripts/battle_sim.mjs 1000회 랜덤 정책 승률로 조정.
 
 import type { BattleDef, BattleUnit, Skill } from './battle01';
 
@@ -61,14 +60,19 @@ function unit(id: 'sea' | 'riwon' | 'yunseul', name: string, maxHp: number, spd:
 
 export const btl_common01: BattleDef = {
   id: 'btl_common01',
+  name: '검열자',
+  enemyShape: 'scribble',
+  roundLimit: 3, // 3턴 버티기 — 그 안에 검열 강도를 0으로 못 만들면 잔상이 90%에서 끊긴다
   party: [unit('sea', '문세아', 100, 12), unit('riwon', '백리원', 90, 15), unit('yunseul', '강윤슬', 95, 10)],
   enemy: {
     id: 'censor_common01',
     name: '검열자·낙서 ×3',
-    maxHp: 120, // 3턴 버티기 목표 — 파티 평균 딜로 3턴 안에 소진되는 선(밸런싱 후속)
+    maxHp: 70, // battle_sim.mjs 1000회 랜덤 정책 기준 승률 60~85% 밴드에 맞춘 값
     spd: 9,
-    sheet: '/assets/sd/aoi/sheet.svg', // 전용 시트 없음 — 기존 플레이스홀더 재사용(다른 워커 산출물 대기)
+    sheet: '/assets/sd/aoi/sheet.svg', // 미사용(적은 CSS 실루엣) — 스키마 필수 필드라 유지
     manifest: '/assets/sd/aoi/manifest.json',
-    skills: [basicAttack],
+    skills: [{ ...basicAttack, power: 14 }],
   },
+  // 코믹 톤 — 검열자는 단어만 뱉는다(STORY §7.1)
+  lines: { enemy: ['■■■.', '지워.', '보지 마.'] },
 };

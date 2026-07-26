@@ -1669,3 +1669,389 @@ button.menu-btn-link {
   display: flex;
   gap: 10px;
 }
+
+/* ---------- 전투 실전 UI (P3C: 턴 레일 · 게이지 · 실루엣 적 · 자막 · 결과) ---------- */
+
+.battle-header {
+  text-align: center;
+}
+
+.battle-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-ui);
+  letter-spacing: 0.14em;
+  color: var(--cream-onDark);
+  text-transform: none;
+}
+
+.battle-title::before,
+.battle-title::after {
+  content: '—';
+  color: var(--battle-turn-highlight);
+  margin: 0 10px;
+}
+
+.battle-enemy-label {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: var(--text-battle-num);
+  color: var(--cream-onDark-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.battle-turn-rail {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.battle-turn-chip {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--battle-hp-track);
+  border: 1px solid var(--battle-panel-border);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--cream-onDark-dim);
+  transition: transform var(--dur-base) var(--ease-settle), box-shadow var(--dur-base) var(--ease-settle);
+}
+
+.battle-turn-chip[data-side='enemy'] {
+  border-style: dashed;
+}
+
+.battle-turn-chip[data-active='true'] {
+  transform: scale(1.06);
+  color: var(--cream-onDark);
+  box-shadow: 0 0 0 1px var(--battle-turn-highlight), 0 0 10px rgba(193, 99, 61, 0.55);
+}
+
+.battle-turn-chip[data-down='true'] {
+  opacity: 0.3;
+  text-decoration: line-through;
+}
+
+.battle-hp-row[data-down='true'] {
+  opacity: 0.4;
+}
+
+.battle-hp-fill {
+  transition: width 300ms ease-out, background-color var(--dur-base) ease-out;
+}
+
+.battle-gauge-row {
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--battle-panel-border);
+}
+
+.battle-gauge-track {
+  height: 6px;
+}
+
+.battle-gauge-fill {
+  height: 100%;
+  border-radius: var(--battle-hp-radius);
+  background: linear-gradient(90deg, var(--accent-terracotta), var(--accent-washi));
+  transition: width 300ms ease-out;
+}
+
+.battle-stage {
+  position: relative;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 220px;
+  justify-content: space-between;
+}
+
+.battle-party {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.battle-party-slot {
+  position: relative;
+  transition: transform 180ms var(--ease-settle), filter 180ms var(--ease-settle), opacity var(--dur-slow) ease-out;
+}
+
+.battle-party-slot[data-active='true'] {
+  filter: drop-shadow(0 6px 10px rgba(193, 99, 61, 0.4));
+}
+
+.battle-party-slot[data-hit='true'] {
+  transform: translateX(10px);
+  filter: brightness(1.6) sepia(1) hue-rotate(-30deg) saturate(4);
+}
+
+.battle-party-slot[data-down='true'] {
+  opacity: 0.28;
+  filter: grayscale(1);
+  transform: translateY(6px) rotate(-6deg);
+}
+
+.battle-party-slot[data-victory='true'] {
+  animation: battle-victory-jump 720ms var(--ease-settle) 2;
+}
+
+@keyframes battle-victory-jump {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-14px);
+  }
+  60% {
+    transform: translateY(0);
+  }
+}
+
+/* 적 = 전용 SD 시트가 없어 CSS 실루엣으로. 검열자 컨셉: 먹으로 칠한 어두운 형체 + 글리치. */
+.battle-enemy {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto;
+  transition: transform 180ms var(--ease-settle), filter 180ms var(--ease-settle);
+}
+
+.battle-enemy-core,
+.battle-enemy-glitch {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 42% 34%, #3a3a41 0%, #1b1b20 58%, #0c0c0f 100%);
+}
+
+.battle-enemy-core {
+  box-shadow: inset 0 0 0 1px rgba(216, 201, 174, 0.12), 0 10px 26px rgba(0, 0, 0, 0.75);
+}
+
+.battle-enemy[data-shape='scribble'] .battle-enemy-core,
+.battle-enemy[data-shape='scribble'] .battle-enemy-glitch {
+  border-radius: 46% 54% 52% 48% / 50% 46% 54% 50%;
+  animation: battle-blob 5.5s ease-in-out infinite;
+}
+
+/* 「먹으로 칠한 동그라미에 팔다리. 귀엽다」 — 눈 두 점 + 삐죽한 팔 (STORY §7.1) */
+.battle-enemy[data-shape='scribble'] .battle-enemy-core::before {
+  content: '';
+  position: absolute;
+  top: 44%;
+  left: 38%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--paper);
+  opacity: 0.8;
+  box-shadow: 22px 0 0 var(--paper);
+}
+
+.battle-enemy[data-shape='scribble'] .battle-enemy-core::after {
+  content: '';
+  position: absolute;
+  top: 52%;
+  left: -12%;
+  width: 124%;
+  height: 2px;
+  background: #17171b;
+  transform: rotate(-9deg);
+}
+
+.battle-enemy[data-shape='figure'] .battle-enemy-core,
+.battle-enemy[data-shape='figure'] .battle-enemy-glitch,
+.battle-enemy[data-shape='self'] .battle-enemy-core,
+.battle-enemy[data-shape='self'] .battle-enemy-glitch {
+  clip-path: polygon(42% 0, 58% 0, 66% 16%, 60% 26%, 78% 40%, 82% 100%, 18% 100%, 22% 40%, 40% 26%, 34% 16%);
+}
+
+.battle-enemy[data-shape='self'] .battle-enemy-core {
+  background: radial-gradient(circle at 50% 30%, #34343a 0%, #17171b 70%);
+}
+
+.battle-enemy-glitch {
+  opacity: 0.55;
+  filter: drop-shadow(2px 0 0 rgba(255, 60, 40, 0.55)) drop-shadow(-2px 0 0 rgba(40, 200, 255, 0.55));
+  animation: battle-glitch 2.6s steps(1, end) infinite;
+}
+
+.battle-enemy[data-hit='true'] {
+  transform: translateX(-10px);
+  filter: brightness(2.2) sepia(1) hue-rotate(-40deg) saturate(5);
+}
+
+@keyframes battle-blob {
+  0%,
+  100% {
+    border-radius: 46% 54% 52% 48% / 50% 46% 54% 50%;
+  }
+  50% {
+    border-radius: 54% 46% 44% 56% / 46% 54% 46% 54%;
+  }
+}
+
+@keyframes battle-glitch {
+  0%,
+  88%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.45;
+  }
+  90% {
+    transform: translate(3px, -2px);
+    opacity: 0.8;
+  }
+  94% {
+    transform: translate(-4px, 1px);
+    opacity: 0.7;
+  }
+}
+
+.battle-subtitle {
+  min-height: 1.6em;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: var(--text-ui);
+  color: var(--cream-onDark);
+}
+
+.battle-subtitle-who {
+  font-family: var(--font-mono);
+  font-size: var(--text-battle-num);
+  color: var(--battle-turn-highlight);
+  margin-right: 8px;
+}
+
+.battle-note {
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: var(--text-ui);
+  color: var(--cream-onDark-dim);
+  font-style: italic;
+}
+
+.battle-command-cost {
+  margin-left: auto;
+  color: var(--accent-washi);
+  font-size: 0.75rem;
+}
+
+.battle-actor-hint {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-battle-num);
+  color: var(--cream-onDark-dim);
+}
+
+.battle-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.battle-result-label {
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  letter-spacing: 0.16em;
+  color: var(--accent-washi);
+}
+
+.battle-result-label[data-outcome='lose'] {
+  color: var(--cream-onDark-dim);
+}
+
+/* 화면 이펙트 — 스킬 fx: flash/shake */
+.battle-screen[data-fx='shake'] .battle-panel {
+  animation: battle-shake 180ms steps(2, end) 2;
+}
+
+.battle-screen[data-fx='flash']::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--paper-inner);
+  opacity: 0.32;
+  pointer-events: none;
+  animation: battle-flash 260ms ease-out forwards;
+}
+
+@keyframes battle-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+}
+
+@keyframes battle-flash {
+  to {
+    opacity: 0;
+  }
+}
+
+/* 전투3 UI 박리 — 단계가 오를수록 패널이 배경으로 녹아 없어진다(STORY §7.3). */
+.battle-screen[data-strip] .battle-panel {
+  transition: opacity var(--unravel-duration) var(--unravel-ease),
+    border-color var(--unravel-duration) var(--unravel-ease), background var(--unravel-duration) var(--unravel-ease);
+}
+
+.battle-screen[data-strip='1'] .battle-panel {
+  border-color: transparent;
+}
+
+.battle-screen[data-strip='2'] .battle-panel {
+  border-color: transparent;
+  background: rgba(20, 22, 28, 0.55);
+}
+
+.battle-screen[data-strip='2'] .battle-turn-rail,
+.battle-screen[data-strip='3'] .battle-turn-rail {
+  opacity: 0;
+}
+
+.battle-screen[data-strip='3'] .battle-panel {
+  opacity: 0;
+  background: transparent;
+  border-color: transparent;
+}
+
+.battle-screen[data-strip='3'] .battle-header {
+  opacity: 0;
+  transition: opacity var(--unravel-duration) var(--unravel-ease);
+}
+
+.battle-screen[data-ui-state='unravel'] .battle-title,
+.battle-screen[data-ui-state='unravel'] .battle-subtitle {
+  filter: drop-shadow(var(--unravel-desync-offset) 0 0 rgba(255, 60, 40, 0.5))
+    drop-shadow(calc(var(--unravel-desync-offset) * -1) 0 0 rgba(40, 200, 255, 0.5));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-party-slot[data-victory='true'],
+  .battle-enemy-glitch,
+  .battle-enemy[data-shape='scribble'] .battle-enemy-core,
+  .battle-screen[data-fx='shake'] .battle-panel {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .battle-screen {
+    padding: 20px 12px;
+  }
+
+  .battle-enemy {
+    width: 104px;
+    height: 104px;
+  }
+}

@@ -59,14 +59,23 @@ function unit(id: 'sea' | 'riwon' | 'yunseul', name: string, maxHp: number, spd:
 
 export const btl_riw02: BattleDef = {
   id: 'btl_riw02',
+  name: '그만 봐, 너 다쳐',
+  enemyShape: 'figure',
+  roundLimit: 5,
+  recover: { round: 3, amount: 20 },
   party: [unit('sea', '문세아', 100, 12), unit('riwon', '백리원', 90, 15), unit('yunseul', '강윤슬', 95, 10)],
   enemy: {
     id: 'censor_riw02',
     name: '검열자·리원형',
-    maxHp: 180,
+    maxHp: 100,
     spd: 11,
     sheet: '/assets/sd/aoi/sheet.svg',
     manifest: '/assets/sd/aoi/manifest.json',
-    skills: [basicAttack],
+    skills: [{ ...basicAttack, power: 16 }],
+  },
+  lines: {
+    enemy: ['그만 봐.', '너 다쳐.', '이건 네 거 아니야.'],
+    personal: ['규정 위반이야.', '…내가 지운 거야.'],
+    final: '…미안해.',
   },
 };

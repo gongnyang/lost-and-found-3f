@@ -27,7 +27,7 @@ const nanumMyeongjo = localFont({
 const SITE_URL = 'https://lost-and-found-3f.vercel.app';
 const TITLE = '분실물 보관소, 3층 D열';
 const DESCRIPTION =
-  '"잊고 싶은 일이 있으면 그 일과 얽힌 물건을 3층 D열에 맡겨라." 기억과 상실을 테마로 한 웹 비주얼노벨 데모 — 히로인 3인 분기·호감도·CG 갤러리·SD 전투 프리뷰.';
+  '"잊고 싶은 일이 있으면 그 일과 얽힌 물건을 3층 D열에 맡겨라." 기억과 상실을 테마로 한 웹 비주얼노벨 데모 — 히로인 3인 분기·호감도·CG 갤러리·SD 턴제 전투.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
