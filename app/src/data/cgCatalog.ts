@@ -5,8 +5,7 @@
 //   우아하게 대체하므로, 파일이 없어도 카탈로그 등록 자체는 미리 해 둔다.
 // 갤러리는 이제 해금 여부와 무관하게 전부 표시한다 — unlock 키 수집(save.ts cgGallery)은
 // 계속 유지되지만 표시 조건에는 쓰지 않는다.
-// 캡션 규칙: docs/SPECIAL-CG.md가 있으면 그 한줄 컨셉을 반영하고, 없으면 캐릭터명+번호로
-// 채운다(작성 시점에 해당 문서 없음 → 캐릭터명+번호 적용).
+// 캡션 규칙: docs/SPECIAL-CG.md의 한줄 컨셉을 그대로 쓴다(뷰어 하단 1행 표시).
 
 export type CgTab = 'story' | 'special';
 export type HeroineId = 'sea' | 'riwon' | 'yunseul';
@@ -19,20 +18,39 @@ export interface CgCatalogEntry {
   heroine?: HeroineId; // 풀스크린 뷰어 보더 힌트 — 특정 히로인에 귀속되지 않는 컷은 생략
 }
 
-const HEROINE_NAME: Record<HeroineId, string> = {
-  sea: '문세아',
-  riwon: '백리원',
-  yunseul: '강윤슬',
+// docs/SPECIAL-CG.md의 컨셉 한 줄 (01~05 순서)
+const SPECIAL_TITLES: Record<HeroineId, readonly string[]> = {
+  sea: [
+    '봄 아침 · 벚꽃 등굣길 역광',
+    '여름 밤 · 강변 불꽃놀이',
+    '심야 · 방송실 네온',
+    '여름 오후 · 비 갠 운동장',
+    '가을 골든아워 · 은행나무 낙엽',
+  ],
+  riwon: [
+    '늦가을 오후 · 도서관 먼지 빛기둥',
+    '여름 장마 · 방과후 복도 창가',
+    '겨울 밤 · 첫눈 골목 가로등',
+    '골든아워 · 노을 학생회실',
+    '이른 봄 아침 · 안개 낀 무인 교정',
+  ],
+  yunseul: [
+    '골든아워 · 옥상 코코아',
+    '겨울 오후 · 눈 내리는 상담실 창가',
+    '가을 오후 · 코스모스 들판',
+    '블루아워 · 바닷가',
+    '초여름 오후 · 등나무 그늘',
+  ],
 };
 
 function specialEntries(heroine: HeroineId): CgCatalogEntry[] {
-  return Array.from({ length: 5 }, (_, i) => {
+  return SPECIAL_TITLES[heroine].map((title, i) => {
     const n = String(i + 1).padStart(2, '0');
     return {
       id: `sp-${heroine}-${n}`,
       tab: 'special' as const,
       src: `/assets/cg/special/sp-${heroine}-${n}.webp`,
-      title: `${HEROINE_NAME[heroine]} ${n}`,
+      title,
       heroine,
     };
   });
