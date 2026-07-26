@@ -10,7 +10,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:scenes": "tsx ../pipeline/scripts/validate_scenes.mjs"
+    "validate:scenes": "tsx scripts/validate_scenes.mjs"
   },
   "dependencies": {
     "howler": "^2.2.4",
