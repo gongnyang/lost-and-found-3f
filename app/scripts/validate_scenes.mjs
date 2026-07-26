@@ -4,14 +4,16 @@
 // 존재  (3) jump 대상 씬·라벨 존재  (4) 플래그 키가 flags.ts(FLAGS) 레지스트리에 등록돼 있는지
 // (5) 표정 키가 Expr 유효값이면서 해당 캐릭터의 실제 exprs 목록에 있는지  (6) bg/cg/sfx 에셋
 // 파일이 app/public에 실존하는지 — P3A부터 bg/cg 부재는 error가 아닌 warning(다른 워커가
-// 에셋 생성 중이라 정상적으로 없을 수 있음).
+// 에셋 생성 중이라 정상적으로 없을 수 있음).  (7) **커맨드 단위 도달성** — 어떤 경로로도
+// 실행되지 않는 커맨드는 error. 라벨 단위 검사만으로는 battle/choice 뒤에 놓인 대사 블록이
+// 통째로 스킵되는 사고(true1s04·sea2s01)를 못 잡아서 추가했다.
 //
 // app/src 아래 TS(경로 alias `@/*`) 를 그대로 import하므로 tsx로 실행한다:
 //   npm run validate:scenes   (app/package.json에서 "tsx ../pipeline/scripts/validate_scenes.mjs")
 //
-// 알려진 한계(1차 구현): 라벨 도달성은 각 씬의 커서 0에서 시작하는 정적 시뮬레이션만 본다.
-// "다른 씬의 jump가 label을 지정해 그 라벨로 바로 진입"하는 경우, 그 라벨 자체의 존재/씬
-// 존재는 검사하지만, 진입 라벨 기준 하위 도달성 재계산은 하지 않는다.
+// 도달성 시뮬레이션의 진입점은 커서 0 + "다른 씬의 jump가 label을 지정해 직접 진입하는 라벨"
+// 전부다(예: sea2s02#win/#lose). 조건 분기는 참·거짓 양쪽을 모두 밟는 낙관적 탐색이라,
+// "실제 플래그 조합으로는 못 가는 길"은 통과시킨다 — 구조적 고아만 잡는 게 목적이다.
 
 import { existsSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -62,11 +64,12 @@ function labelIndexOf(script) {
   return map;
 }
 
-function computeReachableLabels(script) {
+/** 진입점 집합에서 출발해 실제로 실행될 수 있는 커맨드 인덱스와 라벨을 함께 돌려준다. */
+function computeReachable(script, seeds) {
   const labelIndex = labelIndexOf(script);
   const visited = new Set();
   const reachable = new Set();
-  const stack = [0];
+  const stack = [...seeds];
 
   while (stack.length) {
     let idx = stack.pop();
@@ -101,7 +104,17 @@ function computeReachableLabels(script) {
       idx += 1;
     }
   }
-  return reachable;
+  return { visited, reachable };
+}
+
+/** 커맨드를 한 줄로 요약 — 도달 불가 리포트에서 어느 대사가 죽었는지 바로 보이게. */
+function describeCommand(c) {
+  if (c.t === 'say') return `say(${c.who ?? 'N'}): "${c.text.slice(0, 30)}"`;
+  if (c.t === 'label') return `label ${c.id}`;
+  if (c.t === 'fx') return `fx ${c.kind}`;
+  if (c.t === 'jump') return `jump ${c.scene}${c.label ? `#${c.label}` : ''}`;
+  if (c.t === 'battle') return `battle ${c.id}`;
+  return c.t;
 }
 
 function checkAsset(sceneId, src, list) {
@@ -138,6 +151,14 @@ const sceneIds = Object.keys(SCENES);
 if (sceneIds.length === 0) {
   console.error('validate_scenes: SCENES 레지스트리가 비어 있음');
   process.exit(1);
+}
+
+// 씬 간 jump가 지정하는 진입 라벨 — 해당 씬의 커서 0에서 못 닿아도 정상 진입점이다.
+const entryLabels = {};
+for (const sceneId of sceneIds) {
+  for (const c of SCENES[sceneId].script) {
+    if (c.t === 'jump' && c.label) (entryLabels[c.scene] ??= new Set()).add(c.label);
+  }
 }
 
 for (const sceneId of sceneIds) {
@@ -187,11 +208,19 @@ for (const sceneId of sceneIds) {
     }
   }
 
-  // 라벨 도달성 검사
-  const reachable = computeReachableLabels(script);
+  // 도달성 검사 — 라벨 단위 + 커맨드 단위(전투/선택지 뒤 대사 블록 유실 방지).
+  const labelIndex = labelIndexOf(script);
+  const seeds = [0];
+  for (const label of entryLabels[sceneId] ?? []) {
+    if (labelIndex[label] !== undefined) seeds.push(labelIndex[label]);
+  }
+  const { visited, reachable } = computeReachable(script, seeds);
   for (const label of seenLabels) {
     if (!reachable.has(label)) errors.push(`[${sceneId}] 도달 불가능한 라벨: ${label}`);
   }
+  script.forEach((c, i) => {
+    if (!visited.has(i)) errors.push(`[${sceneId}] 도달 불가능한 커맨드 #${i}: ${describeCommand(c)}`);
+  });
 
   // 플래그 키 검사 — flags.ts(FLAGS) 레지스트리 대비. set/if(재귀)/choice.set/choice.if 전부.
   for (const c of script) {

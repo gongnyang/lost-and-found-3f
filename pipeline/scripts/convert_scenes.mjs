@@ -472,6 +472,108 @@ function convertScene(id, rawText) {
 }
 
 // ---------------------------------------------------------------------------
+// 흐름 수리 패스 — 원고의 "쓰인 순서"와 인터프리터의 "실행 순서"가 어긋나 커맨드가 통째로
+// 스킵되는 두 가지 구조적 버그를 컨버터 단계에서 고친다. (interpreter.step 기준: choice·battle은
+// blocking이라 그 자리에서 낙하가 끊기고, 재개 지점은 오직 goto/onWin/onLose 라벨이다.)
+// ---------------------------------------------------------------------------
+
+/** 커서 0(또는 지정 진입점)에서 실제로 실행될 수 있는 커맨드 인덱스 집합. */
+function reachableIndices(script, seeds = [0]) {
+  const labelIndex = {};
+  script.forEach((c, i) => {
+    if (c.t === 'label') labelIndex[c.id] = i;
+  });
+  const visited = new Set();
+  const stack = [...seeds];
+  while (stack.length) {
+    let idx = stack.pop();
+    while (idx >= 0 && idx < script.length && !visited.has(idx)) {
+      visited.add(idx);
+      const c = script[idx];
+      if (c.t === 'if') {
+        if (labelIndex[c.then] !== undefined) stack.push(labelIndex[c.then]);
+        if (c.else) {
+          if (labelIndex[c.else] !== undefined) stack.push(labelIndex[c.else]);
+        } else {
+          stack.push(idx + 1);
+        }
+        break;
+      }
+      if (c.t === 'choice') {
+        for (const it of c.items) if (labelIndex[it.goto] !== undefined) stack.push(labelIndex[it.goto]);
+        break;
+      }
+      if (c.t === 'battle') {
+        if (labelIndex[c.onWin] !== undefined) stack.push(labelIndex[c.onWin]);
+        if (labelIndex[c.onLose] !== undefined) stack.push(labelIndex[c.onLose]);
+        break;
+      }
+      if (c.t === 'jump' || c.t === 'ending') break;
+      idx += 1;
+    }
+  }
+  return visited;
+}
+
+/**
+ * choice 뒤 고아 커맨드 재배치.
+ * choice는 blocking이라 [/choice]와 다음 라벨 사이에 남은 연출 마커(예: true1s04의
+ * `[fx whiteFlash]`)는 어떤 경로로도 실행되지 않는다. 선택지가 전부 같은 라벨로 간다면
+ * 그 라벨 "바로 뒤"로 옮긴다 — 원고 의도인 "선택 직후 연출"이 그대로 복원된다.
+ */
+function relocateChoiceOrphans(id, script) {
+  const out = [...script];
+  for (let i = 0; i < out.length; i++) {
+    if (out[i].t !== 'choice') continue;
+    let j = i + 1;
+    while (j < out.length && out[j].t !== 'label') j++;
+    const orphanCount = j - (i + 1);
+    if (orphanCount === 0) continue;
+    const targets = new Set(out[i].items.map((it) => it.goto));
+    if (j >= out.length || targets.size !== 1 || !targets.has(out[j].id)) {
+      throw new Error(
+        `[${id}] choice 뒤 도달 불가 커맨드 ${orphanCount}개 — 선택지 목표(${[...targets].join('/')})가 ` +
+          `직후 라벨(${j < out.length ? out[j].id : '없음'})과 달라 자동 재배치 불가. 원고를 고칠 것.`,
+      );
+    }
+    const orphans = out.splice(i + 1, orphanCount); // 고아 제거 → 라벨이 i+1로 당겨진다
+    out.splice(i + 2, 0, ...orphans); // 라벨 바로 뒤로 재삽입
+    i += 1 + orphanCount;
+  }
+  return out;
+}
+
+/**
+ * 전투 복귀 라벨 배치.
+ * 원고에서 [battle] 다음에 이어지는 줄들은 "전투에서 돌아온 뒤 재생될 대사"다. 그런데 onWin
+ * 라벨이 그 줄들보다 뒤에 있으면(true1s04의 `after_win`, sea2s01의 `win`) 승리 경로가 그 줄을
+ * 통째로 건너뛰어 도달 불가가 된다. 전투 커맨드 바로 뒤에 복귀 라벨을 만들고 onWin을 그리로
+ * 돌리면, 복귀 줄을 재생한 뒤 원래 onWin 라벨로 자연 낙하한다.
+ * onLose는 STORY.md §7 명세 라벨(`after_lose`·`lose`)을 우선하고, 그런 라벨이 아예 없을 때만
+ * 복귀 라벨을 공유한다. 전투 직후가 이미 onWin 라벨이면(c1s05·riw2s01·yun2s01) 손대지 않는다.
+ */
+function relinkBattleReturns(id, script) {
+  const out = [...script];
+  for (let i = 0; i < out.length; i++) {
+    const cmd = out[i];
+    if (cmd.t !== 'battle') continue;
+    const findLabel = (name) => out.findIndex((c) => c.t === 'label' && c.id === name);
+    if (findLabel(cmd.onWin) === i + 1) continue;
+    const returnId = findLabel('after_battle') < 0 ? 'after_battle' : `after_battle_${cmd.id}`;
+    const loseExists = findLabel(cmd.onLose) >= 0;
+    out[i] = { ...cmd, onWin: returnId, onLose: loseExists ? cmd.onLose : returnId };
+    out.splice(i + 1, 0, { t: 'label', id: returnId });
+    const winIdx = findLabel(cmd.onWin);
+    if (winIdx >= 0 && !reachableIndices(out).has(winIdx)) {
+      throw new Error(
+        `[${id}] 전투 복귀 줄이 onWin 라벨(${cmd.onWin})로 이어지지 않는다 — 원고의 [battle] 뒤 블록 끝을 확인할 것.`,
+      );
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // c2s05 전용 오버라이드 — STORY.md §4.2 "최고 호감도 판정" if 체인.
 // Cond는 플래그-대-상수 비교만 지원(플래그 대 플래그 비교 불가)하므로, aff_sea+aff_riwon+
 // aff_yunseul == 12(고정, CH-01~04 4choice 합산 불변식)를 이용해 aff_sea 값을 먼저 eq로
@@ -690,6 +792,8 @@ function main() {
     if (id === 'c1s01') script = prependFlagInit(script);
     if (id === 'c2s05') script = applyC2s05Routing(script);
     if (['seaGE', 'riwGE', 'yunGE', 'trueEnd'].includes(id)) script = injectGlobalUnlock(id, script);
+    script = relocateChoiceOrphans(id, script);
+    script = relinkBattleReturns(id, script);
     writeSceneFile(id, SCENE_TITLES[id], assets, script);
     totalCommands += script.length;
     console.log(`  ${id}: ${script.length} commands`);
