@@ -11,11 +11,13 @@ const pretendard = localFont({
   variable: '--font-pretendard',
 });
 
+// Nanum Myeongjo는 원본 TTF(3종 9.1MB) 대신 woff2 서브셋(완성형 한글 U+AC00-D7A3 +
+// 라틴 + 본문 문장부호)을 쓴다. 원본은 pipeline/fonts-backup/에 보관.
 const nanumMyeongjo = localFont({
   src: [
-    { path: '../assets/fonts/NanumMyeongjo-Regular.ttf', weight: '400', style: 'normal' },
-    { path: '../assets/fonts/NanumMyeongjo-Bold.ttf', weight: '700', style: 'normal' },
-    { path: '../assets/fonts/NanumMyeongjo-ExtraBold.ttf', weight: '800', style: 'normal' },
+    { path: '../assets/fonts/NanumMyeongjo-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../assets/fonts/NanumMyeongjo-Bold.woff2', weight: '700', style: 'normal' },
+    { path: '../assets/fonts/NanumMyeongjo-ExtraBold.woff2', weight: '800', style: 'normal' },
   ],
   display: 'swap',
   variable: '--font-nanum-myeongjo',

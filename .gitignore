@@ -6,6 +6,8 @@ pipeline/raw/
 pipeline/review/
 pipeline/sprite/*.png
 pipeline/sprite/*.webp
+# 서브셋 전 원본 폰트 보관분 — 앱은 woff2 서브셋만 번들한다.
+pipeline/fonts-backup/
 
 # 최종 배포용 산출물이 아닌 트레일러 작업 소스(게이트④ 이후 별도 관리)
 trailer/raw/
