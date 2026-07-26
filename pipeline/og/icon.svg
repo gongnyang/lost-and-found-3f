@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="분실물 보관소, 3층 D열">
+  <!-- 파비콘/앱아이콘 모티프: 보관소에 맡겨진 폴라로이드 한 장 + 워시테이프.
+       docs/DESIGN-SYSTEM.md 팔레트(bg-void #171310 / paper #F1E6D2 / terracotta #C1633D). -->
+  <defs>
+    <linearGradient id="shaft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E4C36B" stop-opacity="0.42"/>
+      <stop offset="55%" stop-color="#E4C36B" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#E4C36B" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="#171310"/>
+
+  <g transform="rotate(-7 256 256)">
+    <!-- 인화지 -->
+    <rect x="108" y="96" width="296" height="330" rx="8" fill="#F1E6D2"/>
+    <!-- 사진 창 (보관소 통로의 어둠 + 빛기둥) -->
+    <rect x="136" y="124" width="240" height="228" fill="#1C1712"/>
+    <path d="M136 124 L236 124 L176 352 L136 352 Z" fill="url(#shaft)"/>
+    <!-- 선반 실루엣 -->
+    <rect x="136" y="196" width="52" height="6" fill="#3B2E22" opacity="0.85"/>
+    <rect x="136" y="268" width="52" height="6" fill="#3B2E22" opacity="0.85"/>
+    <rect x="324" y="196" width="52" height="6" fill="#3B2E22" opacity="0.85"/>
+    <rect x="324" y="268" width="52" height="6" fill="#3B2E22" opacity="0.85"/>
+    <!-- 캡션 여백의 정리 번호 -->
+    <rect x="164" y="382" width="120" height="14" rx="7" fill="#3B2E22" opacity="0.32"/>
+  </g>
+
+  <!-- 워시테이프 -->
+  <g transform="rotate(-42 118 118)">
+    <rect x="42" y="98" width="152" height="42" rx="3" fill="#C1633D"/>
+    <rect x="42" y="98" width="152" height="42" rx="3" fill="#000000" opacity="0.06"/>
+  </g>
+</svg>

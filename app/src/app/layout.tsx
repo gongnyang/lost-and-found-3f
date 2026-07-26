@@ -23,9 +23,31 @@ const nanumMyeongjo = localFont({
   variable: '--font-nanum-myeongjo',
 });
 
+// 스포일러 없는 로그라인 — 작중 소문 한 줄(README 인용문)까지만 노출한다.
+const SITE_URL = 'https://lost-and-found-3f.vercel.app';
+const TITLE = '분실물 보관소, 3층 D열';
+const DESCRIPTION =
+  '"잊고 싶은 일이 있으면 그 일과 얽힌 물건을 3층 D열에 맡겨라." 기억과 상실을 테마로 한 웹 비주얼노벨 데모 — 히로인 3인 분기·호감도·CG 갤러리·SD 전투 프리뷰.';
+
 export const metadata: Metadata = {
-  title: '분실물 보관소, 3층 D열',
-  description: '기억과 상실 — 웹 비주얼노벨 데모',
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    url: SITE_URL,
+    siteName: TITLE,
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: `${TITLE} — 웹 비주얼노벨 데모` }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ['/og.png'],
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -5,7 +5,9 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type TouchEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { loadGlobal } from '@/engine/save';
+import { clearGalleryFromPlay, isGalleryFromPlay } from '@/engine/navFlags';
 import { CG_CATALOG, type CgTab, type HeroineId } from '@/data/cgCatalog';
 
 const TABS: { key: CgTab; label: string }[] = [
@@ -22,7 +24,9 @@ const HEROINE_ACCENT: Record<HeroineId, string> = {
 const SWIPE_THRESHOLD = 40;
 
 export default function GalleryPage() {
+  const router = useRouter();
   const [endings, setEndings] = useState<string[]>([]);
+  const [fromPlay, setFromPlay] = useState(false);
   const [tab, setTab] = useState<CgTab>('story');
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const [failed, setFailed] = useState<Record<string, boolean>>({});
@@ -34,6 +38,9 @@ export default function GalleryPage() {
     const g = loadGlobal();
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setEndings(g.endings);
+    // /play의 QuickMenu에서 들어왔을 때만 「게임으로 돌아가기」를 노출한다(§2.3 P5).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFromPlay(isGalleryFromPlay());
   }, []);
 
   const items = useMemo(() => CG_CATALOG.filter((cg) => cg.tab === tab), [tab]);
@@ -82,6 +89,15 @@ export default function GalleryPage() {
 
   return (
     <div className="screen">
+      {fromPlay && (
+        <button type="button" className="gallery-back" onClick={() => router.back()}>
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M11.5 4.5 6 10l5.5 5.5" />
+          </svg>
+          게임으로 돌아가기
+        </button>
+      )}
+
       <h1 className="screen-title">갤러리</h1>
       <p className="screen-subtitle">엔딩 {endings.length}개 해금</p>
 
@@ -137,7 +153,8 @@ export default function GalleryPage() {
         </div>
       )}
 
-      <Link className="menu-btn-link" href="/">
+      {/* 타이틀로 나가면 플레이 세션 맥락을 벗어나므로 복귀 표식을 지운다. */}
+      <Link className="menu-btn-link" href="/" onClick={clearGalleryFromPlay}>
         타이틀로
       </Link>
 

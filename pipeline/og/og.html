@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>og compose — 분실물 보관소, 3층 D열</title>
+<!--
+  OG 이미지(1200x630) 컴포즈 소스.
+  규칙: 생성 이미지 위에 코드로 글자를 "그리지" 않는다 — HTML/CSS 조판 결과를 브라우저가
+  렌더한 것을 그대로 스크린샷한다. 배경은 특별 일러 sp-riwon-02(여름 장마 · 방과후 복도 창가,
+  본편 무대인 본관 3층 복도와 같은 결) 1장 + 어두운 스크림 + 필름 그레인.
+  실행: node pipeline/og/shoot.mjs   (출력: app/public/og.png)
+  타이포/컬러 토큰은 docs/DESIGN-SYSTEM.md v1.0을 따른다.
+-->
+<style>
+  @font-face {
+    font-family: 'Nanum Myeongjo';
+    src: url('../../app/src/assets/fonts/NanumMyeongjo-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: block;
+  }
+  @font-face {
+    font-family: 'Nanum Myeongjo';
+    src: url('../../app/src/assets/fonts/NanumMyeongjo-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-display: block;
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    src: url('../../app/src/assets/fonts/PretendardVariable.woff2') format('woff2');
+    font-weight: 45 920;
+    font-display: block;
+  }
+
+  :root {
+    --bg-void: #171310;
+    --cream-onDark: #d8c9ae;
+    --cream-onDark-dim: #a79a85;
+    --accent-terracotta: #c1633d;
+    --font-serif: 'Nanum Myeongjo', serif;
+    --font-sans: 'Pretendard', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 1200px;
+    height: 630px;
+    background: var(--bg-void);
+    overflow: hidden;
+  }
+
+  .card {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: var(--bg-void);
+  }
+
+  /* --- 배경 아트 (특별 일러 1장, 필름 그레이드) --- */
+  .art {
+    position: absolute;
+    inset: 0;
+    background-image: url('../../app/public/assets/cg/special/sp-riwon-01.webp');
+    /* cover로는 가로 여유가 0이라(원본 1.75:1 → 카드 1.905:1) 인물이 정중앙에 박힌다.
+       세로 145%로 확대해 가로 여유를 만들고 좌측 정렬 → 인물이 우측 2/3로 밀리고
+       좌하단이 서가 그늘로 비어 로크업 자리가 생긴다. */
+    background-size: auto 146%;
+    background-position: 2% 2%;
+    background-repeat: no-repeat;
+    filter: sepia(0.12) saturate(0.94) contrast(1.03) brightness(0.92);
+  }
+
+  /* --- 스크림: 하단에서 올라오는 어둠 + 좌측 살짝 --- */
+  .scrim-bottom {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      #100d0b 0%,
+      rgba(16, 13, 11, 0.96) 22%,
+      rgba(18, 15, 12, 0.78) 40%,
+      rgba(20, 17, 14, 0.34) 60%,
+      rgba(20, 17, 14, 0.06) 78%,
+      rgba(12, 10, 8, 0.34) 100%
+    );
+  }
+  .scrim-left {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        to right,
+        rgba(16, 13, 11, 0.8) 0%,
+        rgba(16, 13, 11, 0.42) 32%,
+        rgba(16, 13, 11, 0.04) 60%
+      ),
+      radial-gradient(ellipse 58% 62% at 20% 78%, rgba(12, 10, 8, 0.78), rgba(12, 10, 8, 0) 72%);
+  }
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 78% 82% at 50% 46%, transparent 42%, rgba(0, 0, 0, 0.5) 100%);
+  }
+
+  /* --- 필름 그레인 (DESIGN-SYSTEM §6 구현 A) --- */
+  .grain {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px 4px);
+    background-size: 5px 5px, 6px 6px;
+    mix-blend-mode: overlay;
+    opacity: 0.42;
+  }
+
+  /* --- 인화지 가장자리(필름 슬라이드 프레임) --- */
+  .print-edge {
+    position: absolute;
+    inset: 22px;
+    border: 1px solid rgba(216, 201, 174, 0.2);
+    pointer-events: none;
+  }
+  .print-edge::before,
+  .print-edge::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: rgba(216, 201, 174, 0.5);
+    border-style: solid;
+  }
+  .print-edge::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .print-edge::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  /* --- 로크업 --- */
+  .lockup {
+    position: absolute;
+    left: 74px;
+    right: 74px;
+    bottom: 68px;
+  }
+
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .kicker-rule {
+    width: 34px;
+    height: 2px;
+    background: var(--accent-terracotta);
+  }
+  .kicker-text {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 15px;
+    letter-spacing: 0.34em;
+    color: var(--cream-onDark-dim);
+  }
+
+  .title {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    font-size: 92px;
+    line-height: 1.1;
+    letter-spacing: 0.012em;
+    color: #ece2cd;
+    text-shadow: 0 6px 26px rgba(0, 0, 0, 0.72), 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+  .title-line-2 { display: block; }
+  .title .accent { color: var(--accent-terracotta); }
+
+  .sub {
+    margin-top: 26px;
+    padding-top: 22px;
+    position: relative;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    color: var(--cream-onDark);
+    max-width: 780px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+  .sub::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 1px;
+    background: var(--accent-terracotta);
+  }
+
+  /* --- 우하단 메타 --- */
+  .meta {
+    position: absolute;
+    right: 74px;
+    bottom: 72px;
+    text-align: right;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    color: rgba(216, 201, 174, 0.62);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="art"></div>
+    <div class="scrim-bottom"></div>
+    <div class="scrim-left"></div>
+    <div class="vignette"></div>
+    <div class="grain"></div>
+    <div class="print-edge"></div>
+
+    <div class="lockup">
+      <div class="kicker">
+        <span class="kicker-rule"></span>
+        <span class="kicker-text">한서고등학교 본관 3층</span>
+      </div>
+      <h1 class="title">
+        분실물 보관소,<span class="title-line-2">3층 <span class="accent">D</span>열</span>
+      </h1>
+      <p class="sub">잊고 싶은 일이 있으면 그 일과 얽힌 물건을 3층 D열에 맡겨라.<br>다음 날이면 잊게 된다.</p>
+    </div>
+
+    <div class="meta">WEB VISUAL NOVEL</div>
+  </div>
+</body>
+</html>

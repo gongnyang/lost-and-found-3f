@@ -173,6 +173,7 @@ export default function PlayPage() {
           onOpenLoad={() => setModal('load')}
           onOpenBacklog={() => setModal('backlog')}
           onOpenSettings={() => setModal('settings')}
+          onLeaveToGallery={autoSave}
         />
         {vn.dialogue && (
           <DialogueBox

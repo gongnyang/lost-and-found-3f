@@ -214,6 +214,400 @@ button.menu-btn-link {
   cursor: pointer;
 }
 
+/* ---------- 타이틀 히어로 (/) ---------- */
+/* 키 비주얼 = bg_title_dark(보관소 통로). 소실점이 화면 정중앙에 있는 좌우대칭 구도라
+   로크업도 중앙 정렬로 받는다 — 통로가 제목을 액자처럼 감싼다.
+   메뉴는 '선반에 꽂힌 색인 카드' 모티프: 절취선 해칭 + 호버 시 종이가 왼쪽에서 밀려 들어옴. */
+
+.title-screen {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(28px, 5vh, 64px) 24px calc(clamp(28px, 5vh, 64px) + 28px);
+  overflow: hidden;
+  background: var(--bg-void);
+  isolation: isolate;
+}
+
+.title-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/assets/bg/bg_title_dark.webp');
+  background-size: cover;
+  background-position: center;
+  /* 아주 느린 돌리인 — 통로 안으로 걸어 들어가는 인상. 42s 왕복이라 시선을 끌지 않는다. */
+  transform: scale(1.04);
+  animation: title-dolly 42s var(--ease-settle) infinite alternate;
+  will-change: transform;
+}
+
+/* 소실점 부근에 깔리는 미세한 온기 — 제목이 순흑에서 뜨게 만드는 최소한의 광량. */
+.title-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 46% 38% at 50% 42%, rgba(228, 195, 107, 0.11), transparent 72%),
+    radial-gradient(ellipse 30% 52% at 24% 18%, rgba(228, 195, 107, 0.09), transparent 68%);
+}
+
+.title-dust {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.title-dust span {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(241, 230, 210, 0.85), rgba(241, 230, 210, 0) 70%);
+  opacity: 0;
+  animation: dust-float var(--dust-dur) linear infinite;
+  animation-delay: var(--dust-delay);
+}
+
+/* 하단 가독성 스크림 — 메뉴/크레딧 라인이 바닥 텍스처와 겹치지 않게. */
+.title-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(16, 13, 11, 0.88) 0%,
+    rgba(16, 13, 11, 0.42) 26%,
+    rgba(16, 13, 11, 0) 58%
+  );
+}
+
+.title-stage {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(26px, 4.4vh, 46px);
+  width: 100%;
+  max-width: 640px;
+}
+
+.title-lockup {
+  text-align: center;
+}
+
+.title-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--font-serif);
+  font-size: var(--text-caption);
+  letter-spacing: 0.34em;
+  color: var(--cream-onDark-dim);
+  margin-bottom: clamp(14px, 2vh, 20px);
+  animation: title-rise 700ms var(--ease-settle) both;
+  animation-delay: calc(90ms * var(--i));
+}
+
+.title-kicker-rule {
+  width: 26px;
+  height: 1px;
+  flex: none;
+  background: var(--accent-terracotta);
+  opacity: 0.75;
+}
+
+.title-logo {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: clamp(2.35rem, 8.2vw, 5.5rem);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  color: #ece2cd;
+  text-shadow: 0 8px 34px rgba(0, 0, 0, 0.78), 0 1px 2px rgba(0, 0, 0, 0.55);
+  margin: 0;
+}
+
+.title-logo-line {
+  display: block;
+  animation: title-rise 900ms var(--ease-settle) both;
+  animation-delay: calc(90ms * var(--i));
+}
+
+.title-logo-accent {
+  font-style: normal;
+  color: var(--accent-terracotta);
+}
+
+.title-tagline {
+  position: relative;
+  margin: clamp(20px, 3vh, 30px) auto 0;
+  padding-top: clamp(18px, 2.6vh, 24px);
+  max-width: 30rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(0.8125rem, 0.5vw + 0.72rem, 0.9375rem);
+  line-height: 1.75;
+  letter-spacing: var(--ls-serif);
+  word-break: keep-all;
+  color: var(--cream-onDark);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+  animation: title-rise 900ms var(--ease-settle) both;
+  animation-delay: calc(90ms * var(--i));
+}
+
+.title-tagline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 1px;
+  background: var(--accent-terracotta);
+}
+
+/* --- 메뉴: 선반 색인 카드 --- */
+
+.title-menu {
+  display: flex;
+  flex-direction: column;
+  width: min(400px, 100%);
+}
+
+.title-menu-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  border-top: var(--backlog-divider);
+  color: var(--cream-onDark);
+  text-align: left;
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  transition: border-color var(--dur-fast) var(--ease-settle), color var(--dur-base) var(--ease-settle);
+  animation: title-rise 700ms var(--ease-settle) both;
+  animation-delay: calc(90ms * var(--i));
+}
+
+.title-menu-item:last-child {
+  border-bottom: var(--backlog-divider);
+}
+
+/* 종이가 왼쪽에서 밀려 들어와 행을 채운다 — 대사창/선택지의 종이 언어와 같은 계열. */
+.title-menu-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--paper-inner);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-settle);
+}
+
+.title-menu-item > * {
+  position: relative;
+  z-index: 1;
+}
+
+.title-menu-item:not(:disabled):hover,
+.title-menu-item:not(:disabled):focus-visible {
+  border-left-color: var(--accent-terracotta);
+  color: var(--ink-strong);
+  outline: none;
+}
+
+.title-menu-item:not(:disabled):hover::before,
+.title-menu-item:not(:disabled):focus-visible::before {
+  transform: scaleX(1);
+}
+
+.title-menu-item:disabled {
+  opacity: 0.34;
+  cursor: not-allowed;
+}
+
+.title-menu-label {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: var(--ls-serif);
+  transition: transform var(--dur-base) var(--ease-settle);
+}
+
+.title-menu-item:not(:disabled):hover .title-menu-label,
+.title-menu-item:not(:disabled):focus-visible .title-menu-label {
+  transform: translateX(4px);
+}
+
+.title-menu-note {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  color: var(--cream-onDark-dim);
+  transition: color var(--dur-base) var(--ease-settle);
+}
+
+.title-menu-item:not(:disabled):hover .title-menu-note,
+.title-menu-item:not(:disabled):focus-visible .title-menu-note {
+  color: var(--muted);
+}
+
+.title-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--text-caption);
+  letter-spacing: var(--ls-serif);
+  color: var(--cream-onDark-dim);
+  animation: title-rise 700ms var(--ease-settle) both;
+  animation-delay: calc(90ms * var(--i));
+}
+
+.title-meta-sep {
+  opacity: 0.5;
+}
+
+.title-meta-link {
+  border-bottom: 1px solid rgba(216, 201, 174, 0.28);
+  transition: color var(--dur-fast) var(--ease-settle), border-color var(--dur-fast) var(--ease-settle);
+}
+
+.title-meta-link:hover,
+.title-meta-link:focus-visible {
+  color: var(--accent-terracotta);
+  border-bottom-color: var(--accent-terracotta);
+  outline: none;
+}
+
+.title-footer {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 10;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  color: rgba(167, 154, 133, 0.72);
+  animation: title-rise 700ms var(--ease-settle) both;
+  animation-delay: 900ms;
+}
+
+@keyframes title-dolly {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1.13);
+  }
+}
+
+@keyframes title-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dust-float {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  18% {
+    opacity: 0.5;
+  }
+  72% {
+    opacity: 0.38;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--dust-drift), -190px, 0);
+  }
+}
+
+@media (max-width: 640px) {
+  /* 세로 화면에서 cover 중앙 크롭은 통로 소실점(거의 순흑)만 잡는다 —
+     광원이 있는 좌측 선반 쪽으로 크롭을 옮겨 키 비주얼이 보이게 한다. */
+  .title-bg {
+    background-position: 31% center;
+  }
+
+  .title-glow {
+    background:
+      radial-gradient(ellipse 74% 30% at 50% 34%, rgba(228, 195, 107, 0.13), transparent 74%),
+      radial-gradient(ellipse 62% 34% at 26% 12%, rgba(228, 195, 107, 0.12), transparent 70%);
+  }
+
+  .title-stage {
+    gap: clamp(22px, 3.4vh, 34px);
+  }
+
+  .title-kicker {
+    letter-spacing: 0.22em;
+    gap: 9px;
+  }
+
+  .title-kicker-rule {
+    width: 18px;
+  }
+
+  .title-tagline {
+    line-height: 1.7;
+  }
+
+  .title-menu-item {
+    padding: 13px 14px;
+  }
+
+  .title-footer {
+    font-size: 0.5625rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-bg {
+    animation: none;
+  }
+
+  .title-dust {
+    display: none;
+  }
+
+  .title-kicker,
+  .title-logo-line,
+  .title-tagline,
+  .title-menu-item,
+  .title-meta,
+  .title-footer {
+    animation: none;
+  }
+}
+
 /* ---------- /play ---------- */
 
 .play-screen {
@@ -887,6 +1281,54 @@ button.menu-btn-link {
 }
 
 /* ---------- 갤러리 ---------- */
+
+/* /play의 QuickMenu에서 들어왔을 때만 뜨는 복귀 버튼. 퀵메뉴와 같은 다크 크롬 언어를 쓴다. */
+.gallery-back {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 8px 10px;
+  background: var(--qm-bg);
+  backdrop-filter: blur(var(--qm-blur));
+  -webkit-backdrop-filter: blur(var(--qm-blur));
+  border: none;
+  border-radius: var(--qm-radius);
+  color: var(--cream-onDark);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui);
+  letter-spacing: var(--ls-crisp);
+  transition: color var(--dur-fast) var(--ease-settle), background var(--dur-fast) var(--ease-settle);
+}
+
+.gallery-back svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--dur-fast) var(--ease-settle);
+}
+
+.gallery-back:hover,
+.gallery-back:focus-visible {
+  color: var(--accent-terracotta);
+  background: rgba(23, 19, 16, 0.78);
+  outline: none;
+}
+
+.gallery-back:hover svg,
+.gallery-back:focus-visible svg {
+  transform: translateX(-2px);
+}
+
+@media (max-width: 640px) {
+  .gallery-back {
+    top: 12px;
+    left: 12px;
+    padding: 7px 12px 7px 9px;
+  }
+}
 
 .gallery-tabs {
   position: relative;

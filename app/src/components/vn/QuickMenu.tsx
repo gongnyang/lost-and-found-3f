@@ -6,7 +6,9 @@
 // §5 DESIGN-SYSTEM 아이콘 바 + 유휴 3초 후 감쇠(--qm-idle-opacity)는 여기서 로컬 타이머로 구현.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import Link from 'next/link';
 import type { Settings } from '@/engine/interpreter';
+import { markGalleryFromPlay } from '@/engine/navFlags';
 
 export interface QuickMenuProps {
   settings: Settings;
@@ -16,6 +18,8 @@ export interface QuickMenuProps {
   onOpenLoad: () => void;
   onOpenBacklog: () => void;
   onOpenSettings: () => void;
+  /** 갤러리로 이탈하기 직전 훅 — /play가 오토세이브(슬롯 0)를 굽는 데 쓴다. */
+  onLeaveToGallery?: () => void;
 }
 
 function Icon({ children }: { children: ReactNode }) {
@@ -55,6 +59,13 @@ const ICONS = {
       <path d="M3 6.5h5l1.5 2H17V15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6.5Z" strokeLinejoin="round" />
     </Icon>
   ),
+  gallery: (
+    <Icon>
+      <rect x="3" y="4.5" width="14" height="11" rx="1.5" />
+      <circle cx="7.4" cy="8.6" r="1.2" />
+      <path d="M3.6 14.2 7.4 10.6l2.6 2.5 3.1-3.6 3.3 4.7" />
+    </Icon>
+  ),
   settings: (
     <Icon>
       <circle cx="10" cy="10" r="2.4" />
@@ -71,6 +82,7 @@ export default function QuickMenu({
   onOpenLoad,
   onOpenBacklog,
   onOpenSettings,
+  onLeaveToGallery,
 }: QuickMenuProps) {
   const [idle, setIdle] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -127,6 +139,21 @@ export default function QuickMenu({
         {ICONS.load}
         <span className="quick-btn-label">로드</span>
       </button>
+      {/* 갤러리는 모달이 아니라 /gallery 라우트다. next/link 클라이언트 네비게이션이라
+          zustand 스토어(메모리)의 진행 상태는 그대로 살아 있고, 만약을 위해 이탈 직전
+          오토세이브를 한 번 더 굽는다. 갤러리 쪽 「게임으로 돌아가기」 표식도 여기서 남긴다. */}
+      <Link
+        className="quick-btn"
+        href="/gallery"
+        title="갤러리"
+        onClick={() => {
+          markGalleryFromPlay();
+          onLeaveToGallery?.();
+        }}
+      >
+        {ICONS.gallery}
+        <span className="quick-btn-label">갤러리</span>
+      </Link>
       <button type="button" className="quick-btn" onClick={onOpenSettings} title="설정">
         {ICONS.settings}
         <span className="quick-btn-label">설정</span>
