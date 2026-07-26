@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usePlayStore } from '@/engine/state';
 import { loadSlot, loadGlobal } from '@/engine/save';
+import CreditsOverlay from '@/components/CreditsOverlay';
 
 export default function TitlePage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function TitlePage() {
   const loadFromSlot = usePlayStore((s) => s.loadFromSlot);
   const [hasAutoSave, setHasAutoSave] = useState(false);
   const [endingCount, setEndingCount] = useState(0);
+  const [creditsOpen, setCreditsOpen] = useState(false);
 
   useEffect(() => {
     // 마운트 시 1회, localStorage(외부 시스템)를 읽어 클라이언트 전용으로 hydrate.
@@ -34,7 +36,7 @@ export default function TitlePage() {
 
   return (
     <div className="screen">
-      <h1 className="screen-title">miyensi</h1>
+      <h1 className="screen-title">분실물 보관소, 3층 D열</h1>
       <p className="screen-subtitle">기억과 상실 · 웹 비주얼노벨 데모</p>
       <div className="menu-col">
         <button type="button" className="menu-btn" onClick={handleNewGame}>
@@ -51,6 +53,11 @@ export default function TitlePage() {
       <Link className="menu-btn-link" href="/battle">
         전투 프리뷰(스텁)
       </Link>
+      <button type="button" className="menu-btn-link" onClick={() => setCreditsOpen(true)}>
+        크레딧
+      </button>
+
+      {creditsOpen && <CreditsOverlay onClose={() => setCreditsOpen(false)} />}
     </div>
   );
 }

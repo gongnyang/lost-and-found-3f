@@ -78,19 +78,20 @@ export default function SpritePlayer({ sheet, manifest, action, scale = 1, onCom
   }
   const frame = def.frames[frameIdx] ?? def.frames[0];
 
+  // 바깥은 확대 후 크기의 뷰포트, 안쪽은 원본 프레임 크기로 시트를 오려 놓고 transform으로 확대한다.
+  // (한 겹으로 처리하면 background-size가 원본 배율이라 프레임 창만 커져 옆 프레임까지 비친다.)
   return (
-    <div
-      className="sprite-player"
-      style={{
-        width: frame.w * scale,
-        height: frame.h * scale,
-        backgroundImage: `url(${sheet})`,
-        backgroundPosition: `${-frame.x * scale}px ${-frame.y * scale}px`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: `auto`,
-        imageRendering: 'pixelated',
-        transform: scale !== 1 ? `scale(${scale})` : undefined,
-      }}
-    />
+    <div className="sprite-player" style={{ width: frame.w * scale, height: frame.h * scale }}>
+      <div
+        className="sprite-player-frame"
+        style={{
+          width: frame.w,
+          height: frame.h,
+          backgroundImage: `url(${sheet})`,
+          backgroundPosition: `${-frame.x}px ${-frame.y}px`,
+          transform: scale !== 1 ? `scale(${scale})` : undefined,
+        }}
+      />
+    </div>
   );
 }

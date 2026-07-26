@@ -206,6 +206,14 @@ button {
   color: var(--accent-terracotta);
 }
 
+/* .menu-btn-link을 <button>으로 쓸 때의 브라우저 기본 크롬 제거 */
+button.menu-btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 /* ---------- /play ---------- */
 
 .play-screen {
@@ -570,6 +578,64 @@ button {
 .modal-close:hover {
   border-color: var(--accent-terracotta);
   color: var(--accent-terracotta);
+}
+
+/* ---------- 크레딧 오버레이 (타이틀 진입) ---------- */
+
+.credits-panel {
+  width: min(560px, 92vw);
+  max-height: 82vh;
+  background: var(--backlog-bg);
+  border: 1px solid var(--line-hairline);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+
+.credits-body {
+  overflow-y: auto;
+  padding: 16px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.credits-heading {
+  margin: 0 0 6px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--text-ui);
+  letter-spacing: var(--ls-serif);
+  color: var(--accent-terracotta);
+}
+
+.credits-line {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-ui);
+  line-height: 1.7;
+  color: var(--cream-onDark);
+}
+
+.credits-line code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--cream-onDark-dim);
+}
+
+.credits-block {
+  margin: 0;
+  padding: 10px 12px;
+  background: rgba(216, 201, 174, 0.06);
+  border-left: 2px solid var(--accent-terracotta);
+  border-radius: var(--choice-radius);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  line-height: 1.65;
+  color: var(--cream-onDark);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- 백로그 §5 ---------- */
@@ -1097,6 +1163,14 @@ button {
 
 .sprite-player {
   background-color: transparent;
+  overflow: hidden;
+}
+
+.sprite-player-frame {
+  background-repeat: no-repeat;
+  background-size: auto;
+  image-rendering: pixelated;
+  transform-origin: top left;
 }
 
 .sprite-player--empty {
