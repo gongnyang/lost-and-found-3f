@@ -144,12 +144,6 @@ export default function TitlePage() {
 
         <p className="title-meta" style={{ '--i': 8 } as CSSProperties}>
           엔딩 {endingCount}개 해금
-          <span className="title-meta-sep" aria-hidden="true">
-            ·
-          </span>
-          <Link className="title-meta-link" href="/battle">
-            전투 프리뷰(스텁)
-          </Link>
         </p>
       </div>
 
