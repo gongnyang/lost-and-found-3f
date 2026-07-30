@@ -1,42 +1,44 @@
 # UI 레퍼런스 — 웹 미연시 무드보드
 
+> **참고:** 레퍼런스 이미지(원본 15장 + 썸네일)는 제3자 저작물이라 레포에서 제거함 — 각 항목의 출처 URL을 참조할 것.
+
 프로젝트: 기억과 상실 테마의 감동 비주얼노벨, 셀식 애니메 일러스트, 전연령, 히로인 3명, SD 턴제 전투 미니콘텐츠 포함.
-산출물: `moodboard.html`(시안 3종 비교), `img/`(대표 15장 원본), `img/thumb/`(무드보드용 리사이즈본).
+산출물: `moodboard.html`(시안 3종 비교). 레퍼런스 이미지는 위 참고 사항대로 레포에 포함하지 않음.
 
 ## 출처 링크
 
 ### 현대 비주얼노벨 UI / VN GUI 킷
-- https://onelevelstudio.itch.io/dialogue-gui — VN Dialogue GUI 에셋 팩 (img 01)
-- https://itch.io/game-assets/genre-visual-novel/tag-dialogue-box — 대사창 태그 모음 (img 02)
-- https://www.reddit.com/r/RenPy/comments/1pyelxx/for_hire_ui_design_for_visual_novelnarrative/ — Ren'Py 외주 UI 샘플 (img 03)
-- https://www.reddit.com/r/Unity2D/comments/1fgkji5/dialogue_ui_design_from_my_visual_novel_game/ — Unity2D 대사창 UI (img 04)
-- https://itch.io/game-assets/top-sellers/genre-visual-novel/tag-user-interface — VN UI 인기 판매작 (img 05)
+- https://onelevelstudio.itch.io/dialogue-gui — VN Dialogue GUI 에셋 팩
+- https://itch.io/game-assets/genre-visual-novel/tag-dialogue-box — 대사창 태그 모음
+- https://www.reddit.com/r/RenPy/comments/1pyelxx/for_hire_ui_design_for_visual_novelnarrative/ — Ren'Py 외주 UI 샘플
+- https://www.reddit.com/r/Unity2D/comments/1fgkji5/dialogue_ui_design_from_my_visual_novel_game/ — Unity2D 대사창 UI
+- https://itch.io/game-assets/top-sellers/genre-visual-novel/tag-user-interface — VN UI 인기 판매작
 - https://itch.io/c/1466304/vn-gui — VN GUI 컬렉션 (Psykhae)
 - https://www.pinterest.com/cat200403/visual-novel-ui/ , https://www.pinterest.com/ideas/visual-novel-ui-template/925593159769/
 - https://forums.fuwanovel.moe/blogs/entry/4226-ui-design-%E2%80%93-an-anatomy-of-visual-novels/ — VN UI 해부 아티클(텍스트박스 레이아웃 이론)
 - https://visual-novel-interfaces.tumblr.com/resources — VN 인터페이스 리소스 아카이브
 
 ### 13 Sentinels: Aegis Rim (최신 수작 VN UI)
-- https://www.gameuidatabase.com/gameData.php?id=1114 — 메뉴 플로우·애니메이션 전체 스크린샷 (img 06, 07, 08)
+- https://www.gameuidatabase.com/gameData.php?id=1114 — 메뉴 플로우·애니메이션 전체 스크린샷
 - https://www.rpgfan.com/gallery/13-sentinels-aegis-rim-screenshots/
 - https://www.creativeuncut.com/art_13-sentinels-aegis-rim_a.html
 - https://www.gameuidatabase.com/index.php?scrn=162 — Dialogue & Speech 카테고리 브라우징
 
 ### 모바일 미연시 — 대사창/선택지/호감도 UI
-- https://www.reddit.com/r/MrLove/ — Mr Love: Queen's Choice 로딩 화면 (img 09)
+- https://www.reddit.com/r/MrLove/ — Mr Love: Queen's Choice 로딩 화면
 - https://www.reddit.com/r/otomegames/comments/bqx5kb/mr_love_queens_choice_tips_qa_and_art/ — 호감도(Affection) UI 설명
 - https://mr-love-queens-choice.fandom.com/wiki/Phone — 호감도 상승용 Phone/채팅 UI 위키
-- https://www.reddit.com/r/LoveAndDeepspace/comments/1j1dc9d/a_small_appreciation_post_for_whoever_designs_the/ — Love and Deepspace UI 호평 스레드 (img 10)
-- https://www.reddit.com/r/LoveAndDeepspace/comments/1amtrn1/bias_aside_who_is_your_favorite_to_text/ — L&D 채팅형 대사 UI (img 11)
+- https://www.reddit.com/r/LoveAndDeepspace/comments/1j1dc9d/a_small_appreciation_post_for_whoever_designs_the/ — Love and Deepspace UI 호평 스레드
+- https://www.reddit.com/r/LoveAndDeepspace/comments/1amtrn1/bias_aside_who_is_your_favorite_to_text/ — L&D 채팅형 대사 UI
 
 ### SD 턴제 전투 UI / 귀여운 사례
-- https://www.reddit.com/r/JRPG/comments/ay7ky9/what_are_your_favorite_menu_designs_in_jrpgs/ — JRPG 메뉴 UI 인기 스레드 (img 12)
-- https://voxlap.artstation.com/projects/zAnadZ — George Castle, Turn-Based RPG Battle System 목업 (img 13)
-- https://www.reddit.com/r/otomegames/comments/l17u0e/stand_by_me_otome_rpg_free_demo_released_on_itchio/ — Stand By Me 오토메 RPG 데모 (img 14)
-- https://yuscake.com/2024/09/02/celestine-one-to-eleven-demo/ — Celestine: One to Eleven 데모 스크린샷 (img 15)
+- https://www.reddit.com/r/JRPG/comments/ay7ky9/what_are_your_favorite_menu_designs_in_jrpgs/ — JRPG 메뉴 UI 인기 스레드
+- https://voxlap.artstation.com/projects/zAnadZ — George Castle, Turn-Based RPG Battle System 목업
+- https://www.reddit.com/r/otomegames/comments/l17u0e/stand_by_me_otome_rpg_free_demo_released_on_itchio/ — Stand By Me 오토메 RPG 데모
+- https://yuscake.com/2024/09/02/celestine-one-to-eleven-demo/ — Celestine: One to Eleven 데모 스크린샷
 - https://www.reddit.com/r/Unity3D/comments/dnn3lt/my_turnbased_strategy_game_ui/ — 턴제 전략 UI 참고
 
-> 다운로드 원본은 `img/` (파일명 01~15 그대로), 무드보드에 쓴 리사이즈본은 `img/thumb/`. 이미지 저작권은 각 원 저작권자(개발사/작가) 소유이며, 본 문서는 내부 무드보드 참고용으로만 사용.
+> 이미지 저작권은 각 원 저작권자(개발사/작가) 소유. 레퍼런스 이미지 파일은 재배포 문제로 레포에서 제거했으며, 위 출처 URL에서 직접 확인할 것.
 
 ## 디자인 방향 시안 3종
 
